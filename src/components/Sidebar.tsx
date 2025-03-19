@@ -211,39 +211,28 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
           <Typography>Settings</Typography>
         </Box>
       </AccordionSummary>
-      <AccordionDetails sx={{ p: 0, pt: 1 }}>
+      <AccordionDetails sx={{ p: 0 }}>
         <Box sx={{ mb: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography variant="caption" sx={{ mb: 0.5 }}>
               Model
             </Typography>
-            <InfoTooltip title="Select the AI model to use for generating responses" />
+            <InfoTooltip title="Select the AI model to use for conversations" />
           </Box>
           <Select
             fullWidth
             size="small"
             value={settings.selectedModel}
             onChange={handleModelChange}
-            MenuProps={{
-              PaperProps: {
-                style: {
-                  maxHeight: 300,
-                  width: 250
-                }
-              }
-            }}
             sx={{ 
               fontSize: '0.875rem',
-              '& .MuiSelect-select': { py: 1 }
-            }}
-            renderValue={(selected) => {
-              const model = MODELS.find(m => m.value === selected);
-              return (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <SmartToyOutlinedIcon fontSize="small" />
-                  <Typography variant="body2" noWrap>{model?.label}</Typography>
-                </Box>
-              );
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  borderColor: 'rgba(0, 0, 0, 0.2)',
+                }
+              }
             }}
           >
             {MODELS.map((model) => (

@@ -19,14 +19,13 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { atomDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 interface MarkdownRendererProps {
   content: string;
-  isDarkMode: boolean;
 }
 
-const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, isDarkMode }) => {
+const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
   return (
     <ReactMarkdown
       rehypePlugins={[rehypeRaw, rehypeSanitize]}
@@ -77,7 +76,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, isDarkMode
               <Box
                 component="code"
                 sx={{
-                  backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.06)',
+                  backgroundColor: 'rgba(0, 0, 0, 0.06)',
                   borderRadius: 1,
                   p: 0.5,
                   display: 'inline',
@@ -112,20 +111,20 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, isDarkMode
                     sx={{ 
                       height: 20, 
                       fontSize: '0.7rem',
-                      backgroundColor: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.06)',
-                      color: isDarkMode ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.7)'
+                      backgroundColor: 'rgba(0, 0, 0, 0.06)',
+                      color: 'rgba(0, 0, 0, 0.7)'
                     }} 
                   />
                 </Box>
               )}
               <SyntaxHighlighter
-                style={isDarkMode ? atomDark : oneLight}
+                style={oneLight}
                 language={language || 'javascript'}
                 customStyle={{
                   margin: 0,
                   borderRadius: '8px',
                   fontSize: '0.875rem',
-                  boxShadow: isDarkMode ? 'inset 0 0 10px rgba(0, 0, 0, 0.2)' : 'inset 0 0 10px rgba(0, 0, 0, 0.05)'
+                  boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.05)'
                 }}
               >
                 {String(children).replace(/\n$/, '')}
@@ -186,7 +185,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, isDarkMode
               pl: 2,
               py: 0.5,
               my: 2,
-              bgcolor: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+              bgcolor: 'rgba(0, 0, 0, 0.02)',
               borderRadius: '0 4px 4px 0'
             }}
           >
@@ -208,7 +207,6 @@ interface ChatMessageProps {
 const ChatMessage: React.FC<ChatMessageProps> = ({ message, isUser }) => {
   const theme = useTheme();
   const [copied, setCopied] = React.useState<boolean>(false);
-  const isDarkMode = theme.palette.mode === 'dark';
   const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   const handleCopy = () => {
@@ -256,14 +254,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isUser }) => {
               p: 2,
               bgcolor: isUser 
                 ? `${theme.palette.primary.main}15` 
-                : isDarkMode 
-                  ? `${theme.palette.background.paper}` 
-                  : `${theme.palette.background.paper}`,
+                : `${theme.palette.background.paper}`,
               borderRadius: 2,
               position: 'relative',
             }}
           >
-            <MarkdownRenderer content={message} isDarkMode={isDarkMode} />
+            <MarkdownRenderer content={message} />
             <Box
               className="message-time"
               sx={{

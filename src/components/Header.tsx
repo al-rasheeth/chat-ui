@@ -11,20 +11,13 @@ import {
   Badge,
   Avatar
 } from '@mui/material';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-interface HeaderProps {
-  toggleTheme: () => void;
-  isDarkMode: boolean;
-}
-
-const Header: React.FC<HeaderProps> = ({ toggleTheme, isDarkMode }) => {
+const Header: React.FC = () => {
   const theme = useTheme();
   
   return (
@@ -36,9 +29,7 @@ const Header: React.FC<HeaderProps> = ({ toggleTheme, isDarkMode }) => {
         borderBottom: `1px solid ${theme.palette.divider}`,
         transition: 'all 0.3s ease',
         backdropFilter: 'blur(8px)',
-        backgroundColor: theme.palette.mode === 'dark' 
-          ? 'rgba(30, 30, 30, 0.8)' 
-          : 'rgba(255, 255, 255, 0.8)',
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
       }}
     >
       <Toolbar>
@@ -63,9 +54,7 @@ const Header: React.FC<HeaderProps> = ({ toggleTheme, isDarkMode }) => {
                 width: 40,
                 height: 40,
                 borderRadius: '50%',
-                backgroundColor: theme.palette.mode === 'dark' 
-                  ? 'rgba(25, 118, 210, 0.1)' 
-                  : 'rgba(25, 118, 210, 0.05)',
+                backgroundColor: 'rgba(25, 118, 210, 0.05)',
                 mr: 1.5,
                 overflow: 'hidden',
                 '&::before': {
@@ -102,9 +91,7 @@ const Header: React.FC<HeaderProps> = ({ toggleTheme, isDarkMode }) => {
               className="animated-gradient-text"
               sx={{ 
                 fontWeight: 700,
-                background: theme.palette.mode === 'dark' 
-                  ? 'linear-gradient(45deg, #90caf9, #42a5f5, #64b5f6, #90caf9)'
-                  : 'linear-gradient(45deg, #1976d2, #42a5f5, #1976d2, #42a5f5)',
+                background: 'linear-gradient(45deg, #1976d2, #42a5f5, #1976d2, #42a5f5)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 letterSpacing: '0.5px'
@@ -161,22 +148,6 @@ const Header: React.FC<HeaderProps> = ({ toggleTheme, isDarkMode }) => {
                 <Badge color="error" variant="dot">
                   <NotificationsNoneIcon />
                 </Badge>
-              </IconButton>
-            </Tooltip>
-            
-            <Tooltip title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"} TransitionComponent={Zoom}>
-              <IconButton 
-                onClick={toggleTheme} 
-                color="inherit"
-                sx={{
-                  transition: 'all 0.3s ease',
-                  transform: isDarkMode ? 'rotate(180deg)' : 'rotate(0deg)',
-                  '&:hover': {
-                    color: theme.palette.primary.main
-                  }
-                }}
-              >
-                {isDarkMode ? <Brightness7Icon /> : <Brightness4Icon />}
               </IconButton>
             </Tooltip>
             

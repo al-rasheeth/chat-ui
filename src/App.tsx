@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { 
   Box, 
   CssBaseline, 
   ThemeProvider, 
   createTheme,
-  useMediaQuery,
   GlobalStyles,
   alpha
 } from '@mui/material';
@@ -13,16 +12,9 @@ import Sidebar from './components/Sidebar';
 import ChatArea from './components/ChatArea';
 
 const App: React.FC = () => {
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(prefersDarkMode);
-  
-  useEffect(() => {
-    setIsDarkMode(prefersDarkMode);
-  }, [prefersDarkMode]);
-
   const theme = createTheme({
     palette: {
-      mode: isDarkMode ? 'dark' : 'light',
+      mode: 'light',
       primary: {
         main: '#1976d2',
         light: '#42a5f5',
@@ -34,8 +26,8 @@ const App: React.FC = () => {
         dark: '#1b5e20',
       },
       background: {
-        default: isDarkMode ? '#121212' : '#f5f7fa',
-        paper: isDarkMode ? '#1e1e1e' : '#ffffff',
+        default: '#f5f7fa',
+        paper: '#ffffff',
       },
       error: {
         main: '#d32f2f',
@@ -168,14 +160,14 @@ const App: React.FC = () => {
               height: '8px',
             },
             '&::-webkit-scrollbar-track': {
-              background: isDarkMode ? '#1e1e1e' : '#f1f1f1',
+              background: '#f1f1f1',
             },
             '&::-webkit-scrollbar-thumb': {
-              background: isDarkMode ? '#555' : '#bbb',
+              background: '#bbb',
               borderRadius: '4px',
             },
             '&::-webkit-scrollbar-thumb:hover': {
-              background: isDarkMode ? '#777' : '#999',
+              background: '#999',
             },
           },
         },
@@ -203,8 +195,8 @@ const App: React.FC = () => {
             borderRadius: 6,
             fontSize: '0.75rem',
             padding: '6px 10px',
-            backgroundColor: isDarkMode ? alpha('#fff', 0.9) : alpha('#000', 0.8),
-            color: isDarkMode ? '#000' : '#fff',
+            backgroundColor: alpha('#000', 0.8),
+            color: '#fff',
             boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
           },
         },
@@ -260,7 +252,7 @@ const App: React.FC = () => {
         width: '100vw',
         overflow: 'hidden'
       }}>
-        <Header toggleTheme={() => setIsDarkMode(!isDarkMode)} isDarkMode={isDarkMode} />
+        <Header />
         <Box sx={{ 
           display: 'flex', 
           flex: 1,

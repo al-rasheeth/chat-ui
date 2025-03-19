@@ -116,7 +116,7 @@ const ArrowConnector = styled('div')<ArrowConnectorProps>(({ theme, active, comp
   alignItems: 'center',
   color: active || completed 
     ? theme.palette.primary.main 
-    : theme.palette.mode === 'dark' ? theme.palette.grey[700] : theme.palette.grey[400],
+    : theme.palette.grey[400],
   transition: 'all 0.5s ease',
   '& svg': {
     fontSize: 30,
@@ -143,7 +143,7 @@ interface WorkflowStepIconRootProps {
 
 // Custom step icon
 const WorkflowStepIconRoot = styled('div')<WorkflowStepIconRootProps>(({ theme, ownerState }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? theme.palette.grey[800] : theme.palette.grey[300],
+  backgroundColor: theme.palette.grey[300],
   zIndex: 1,
   color: '#fff',
   width: 50,
@@ -158,7 +158,7 @@ const WorkflowStepIconRoot = styled('div')<WorkflowStepIconRootProps>(({ theme, 
   border: '2px solid transparent',
   ...(ownerState.active && {
     backgroundImage: `linear-gradient(135deg, ${theme.palette.primary.light}, ${theme.palette.primary.main})`,
-    boxShadow: `0 8px 16px rgba(0,0,0,0.2), 0 0 0 4px ${theme.palette.mode === 'dark' ? 'rgba(66, 165, 245, 0.2)' : 'rgba(66, 165, 245, 0.1)'}`,
+    boxShadow: `0 8px 16px rgba(0,0,0,0.2), 0 0 0 4px rgba(66, 165, 245, 0.1)`,
     transform: 'scale(1.2)',
     animation: `${pulse} 2s infinite ease-in-out, ${glow} 2s infinite ease-in-out`,
     '& svg': {
