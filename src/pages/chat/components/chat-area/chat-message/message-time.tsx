@@ -14,8 +14,8 @@ export const MessageTime: React.FC<MessageTimeProps> = ({ isUser, time }) => {
       sx={{
         position: 'absolute',
         bottom: -20,
-        right: isUser ? 'auto' : 0,
-        left: isUser ? 0 : 'auto',
+        right: !isUser ? 'auto' : 0,
+        left: !isUser ? 0 : 'auto',
         opacity: 0,
         display: 'flex',
         alignItems: 'center',

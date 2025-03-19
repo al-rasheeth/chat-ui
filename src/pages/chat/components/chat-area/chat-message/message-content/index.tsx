@@ -1,8 +1,8 @@
 import { Box, Paper, useTheme } from '@mui/material';
 import React from 'react';
 import { MarkdownRenderer } from '../../../../../../components/markdown-renderer';
-import { MessageTime } from '../message-time';
 import { CopyButton } from '../copy-button';
+import { MessageTime } from '../message-time';
 
 interface MessageContentProps {
   message: string;
@@ -18,7 +18,7 @@ export const MessageContent: React.FC<MessageContentProps> = ({
   const theme = useTheme();
 
   return (
-    <Box sx={{ position: 'relative', maxWidth: '85%' }}>
+    <Box sx={{ position: 'relative', maxWidth: '85%', minWidth: '10%' }}>
       <Paper
         elevation={2}
         sx={{
@@ -28,6 +28,11 @@ export const MessageContent: React.FC<MessageContentProps> = ({
             : `${theme.palette.background.paper}`,
           borderRadius: 2,
           position: 'relative',
+          transition: 'all 0.2s ease-in-out',
+          '&:hover': {
+            boxShadow: theme.shadows[4],
+            transform: 'translateY(-1px)'
+          }
         }}
       >
         <MarkdownRenderer content={message} />
