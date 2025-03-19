@@ -1,14 +1,6 @@
 import React from 'react';
-import { 
-  Box, 
-  CssBaseline, 
-  ThemeProvider, 
-  createTheme,
-  GlobalStyles
-} from '@mui/material';
-import Header from './components/Header';
-import Sidebar from './components/Sidebar';
-import ChatArea from './components/ChatArea';
+import { ThemeProvider, createTheme } from '@mui/material';
+import AppRouter from './router';
 
 const App: React.FC = () => {
   const theme = createTheme({
@@ -80,44 +72,7 @@ const App: React.FC = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <GlobalStyles
-        styles={{
-          '*': {
-            boxSizing: 'border-box',
-            margin: 0,
-            padding: 0,
-          },
-          html: {
-            WebkitFontSmoothing: 'antialiased',
-            MozOsxFontSmoothing: 'grayscale',
-            height: '100%',
-            width: '100%',
-          },
-          body: {
-            height: '100%',
-            width: '100%',
-            overflowX: 'hidden',
-          },
-          '#root': {
-            height: '100%',
-            width: '100%',
-          },
-        }}
-      />
-      <Box sx={{ 
-        display: 'flex', 
-        flexDirection: 'column',
-        height: '100vh',
-        width: '100vw',
-        overflow: 'hidden'
-      }}>
-        <Header />
-        <Box sx={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-          <Sidebar />
-          <ChatArea />
-        </Box>
-      </Box>
+      <AppRouter />
     </ThemeProvider>
   );
 };
