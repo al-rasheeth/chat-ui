@@ -7,47 +7,27 @@ import {
   Typography,
   useTheme
 } from '@mui/material';
-import React, { useState } from 'react';
+import React from 'react';
 import { ChatListItem } from './ChatListItem';
 import { SettingsSection } from './SettingsSection';
-import { DEFAULT_SETTINGS } from './constants';
-import { Chat, Settings } from './types';
+import { useChatStore } from '../../../../store/chatStore';
+import { useSettingsStore } from '../../../../store/settingsStore';
+import { useUIStore } from '../../../../store/uiStore';
 
 export const Sidebar: React.FC = () => {
   const theme = useTheme();
-  const [chats, setChats] = useState<Chat[]>([]);
-  const [settings, setSettings] = useState<Settings>(() => {
-    const savedSettings = localStorage.getItem('chatSettings');
-    return savedSettings ? JSON.parse(savedSettings) : DEFAULT_SETTINGS;
-  });
-  const [activeChat, setActiveChat] = useState<string | null>(null);
-
-  const handleSettingsChange = (newSettings: Partial<Settings>) => {
-    setSettings(prev => ({ ...prev, ...newSettings }));
-  };
-
-  const handleSettingsSave = () => {
-    localStorage.setItem('chatSettings', JSON.stringify(settings));
-  };
-
-  const handleSettingsReset = () => {
-    setSettings(DEFAULT_SETTINGS);
-    localStorage.removeItem('chatSettings');
-  };
+  const { chats, addChat, deleteChat } = useChatStore();
+  const { settings, updateSettings, resetSettings } = useSettingsStore();
+  const { activeChatId, setActiveChat } = useUIStore();
 
   const handleNewChat = () => {
-    const newChat: Chat = {
-      id: Date.now().toString(),
-      title: `Chat ${chats.length + 1}`,
-      timestamp: Date.now()
-    };
-    setChats(prev => [newChat, ...prev]);
-    setActiveChat(newChat.id);
+    const newChatId = addChat(`Chat ${chats.length + 1}`);
+    setActiveChat(newChatId);
   };
 
   const handleDeleteChat = (id: string) => {
-    setChats(prev => prev.filter(chat => chat.id !== id));
-    if (activeChat === id) {
+    deleteChat(id);
+    if (activeChatId === id) {
       setActiveChat(null);
     }
   };
@@ -102,7 +82,7 @@ export const Sidebar: React.FC = () => {
               key={chat.id}
               chat={chat}
               onDelete={handleDeleteChat}
-              isActive={activeChat === chat.id}
+              isActive={activeChatId === chat.id}
               onClick={() => setActiveChat(chat.id)}
             />
           ))}
@@ -116,9 +96,9 @@ export const Sidebar: React.FC = () => {
       }}>
         <SettingsSection
           settings={settings}
-          onChange={handleSettingsChange}
-          onSave={handleSettingsSave}
-          onReset={handleSettingsReset}
+          onChange={updateSettings}
+          onSave={() => {}}
+          onReset={resetSettings}
         />
       </Box>
     </Paper>

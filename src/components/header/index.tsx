@@ -1,29 +1,28 @@
-import React from 'react';
-import { 
-  AppBar, 
-  Toolbar, 
-  Typography, 
-  Box, 
-  IconButton, 
-  useTheme, 
-  Tooltip,
-  Zoom,
-  Badge,
-  Avatar
-} from '@mui/material';
-import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
-import GitHubIcon from '@mui/icons-material/GitHub';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
+import {
+  AppBar,
+  Avatar,
+  Badge,
+  Box,
+  IconButton,
+  Toolbar,
+  Tooltip,
+  Typography,
+  useTheme,
+  Zoom
+} from '@mui/material';
+import React from 'react';
 
 export const Header: React.FC = () => {
   const theme = useTheme();
-  
+
   return (
-    <AppBar 
-      position="static" 
-      color="default" 
+    <AppBar
+      position="static"
+      color="default"
       elevation={0}
       sx={{
         borderBottom: `1px solid ${theme.palette.divider}`,
@@ -33,8 +32,8 @@ export const Header: React.FC = () => {
     >
       <Toolbar>
         <Box display="flex" alignItems="center" width="100%">
-          <Box 
-            sx={{ 
+          <Box
+            sx={{
               display: 'flex',
               alignItems: 'center',
               mr: 2,
@@ -73,19 +72,19 @@ export const Header: React.FC = () => {
                 }
               }}
             >
-              <SmartToyOutlinedIcon 
-                sx={{ 
-                  fontSize: 24, 
+              <SmartToyOutlinedIcon
+                sx={{
+                  fontSize: 24,
                   color: theme.palette.primary.main,
                   filter: 'drop-shadow(0 0 2px rgba(25, 118, 210, 0.5))',
                   zIndex: 1
-                }} 
+                }}
               />
             </Box>
-            <Typography 
-              variant="h6" 
+            <Typography
+              variant="h6"
               component="div"
-              sx={{ 
+              sx={{
                 fontWeight: 700,
                 background: 'linear-gradient(45deg, #1976d2, #42a5f5, #1976d2, #42a5f5)',
                 WebkitBackgroundClip: 'text',
@@ -96,12 +95,12 @@ export const Header: React.FC = () => {
               AI Chat
             </Typography>
           </Box>
-          
+
           <Box sx={{ flexGrow: 1 }} />
-          
+
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
             <Tooltip title="Help" TransitionComponent={Zoom}>
-              <IconButton 
+              <IconButton
                 color="inherit"
                 sx={{
                   '&:hover': {
@@ -113,9 +112,9 @@ export const Header: React.FC = () => {
                 <HelpOutlineIcon />
               </IconButton>
             </Tooltip>
-            
+
             <Tooltip title="Notifications" TransitionComponent={Zoom}>
-              <IconButton 
+              <IconButton
                 color="inherit"
                 sx={{
                   '&:hover': {
@@ -129,7 +128,7 @@ export const Header: React.FC = () => {
                 </Badge>
               </IconButton>
             </Tooltip>
-            
+
             <Tooltip title="Account" TransitionComponent={Zoom}>
               <Avatar
                 sx={{

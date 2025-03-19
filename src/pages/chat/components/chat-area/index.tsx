@@ -4,18 +4,15 @@ import { ChatMessage } from './chat-message';
 import { Workflow } from './workflow';
 import { EmptyState } from './empty-state';
 import { ChatInput } from './chat-input';
-
-interface Message {
-  text: string;
-  isUser: boolean;
-}
+import { useChatStore } from '../../../../store/chatStore';
+import { useUIStore } from '../../../../store/uiStore';
 
 export const ChatArea: React.FC = () => {
   const theme = useTheme();
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { activeChatId, setLoading, setWorkflowStep, isLoading, currentWorkflowStep, setActiveChat } = useUIStore();
+  const { chats, addMessage, addChat } = useChatStore();
+  const activeChat = chats.find(chat => chat.id === activeChatId);
   const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -25,7 +22,7 @@ export const ChatArea: React.FC = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [activeChat?.messages]);
 
   useEffect(() => {
     focusInput();
@@ -36,30 +33,39 @@ export const ChatArea: React.FC = () => {
   };
 
   const handleSend = () => {
-    if (!input.trim()) return;
+    const trimmedInput = input.trim();
+    if (!trimmedInput) return;
 
-    const newMessage: Message = {
-      text: input,
+    let currentChatId = activeChatId;
+    
+    // Create new chat if none exists
+    if (!currentChatId) {
+      currentChatId = addChat('New Chat');
+      setActiveChat(currentChatId);
+    }
+
+    const newMessage = {
+      text: trimmedInput,
       isUser: true
     };
 
-    setMessages(prev => [...prev, newMessage]);
+    addMessage(currentChatId as string, newMessage);
     setInput('');
-    setIsLoading(true);
-    setCurrentStep(0);
+    setLoading(true);
+    setWorkflowStep(0);
 
     // Simulate AI response with workflow steps
     const steps = [0, 1, 2, 3, 4, 5];
     steps.forEach((step, index) => {
       setTimeout(() => {
-        setCurrentStep(step);
+        setWorkflowStep(step);
         if (index === steps.length - 1) {
-          const aiResponse: Message = {
+          const aiResponse = {
             text: "This is a simulated AI response. In a real application, this would be replaced with actual AI-generated content.",
             isUser: false
           };
-          setMessages(prev => [...prev, aiResponse]);
-          setIsLoading(false);
+          addMessage(currentChatId as string, aiResponse);
+          setLoading(false);
         }
       }, index * 1000); // Each step takes 1 second
     });
@@ -70,11 +76,15 @@ export const ChatArea: React.FC = () => {
     focusInput();
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
   };
 
   return (
@@ -101,12 +111,12 @@ export const ChatArea: React.FC = () => {
           gap: 2
         }}
       >
-        {messages.length === 0 ? (
+        {!activeChat || activeChat.messages.length === 0 ? (
           <EmptyState onSuggestionClick={handleSuggestionClick} />
         ) : (
-          messages.map((message, index) => (
+          activeChat.messages.map((message) => (
             <ChatMessage
-              key={index}
+              key={message.id}
               message={message.text}
               isUser={message.isUser}
             />
@@ -116,16 +126,16 @@ export const ChatArea: React.FC = () => {
       </Box>
 
       {/* Workflow Progress */}
-      {isLoading && <Workflow currentStep={currentStep} />}
+      {isLoading && <Workflow currentStep={currentWorkflowStep} />}
 
       {/* Input Area */}
       <ChatInput
         input={input}
         isLoading={isLoading}
         inputRef={inputRef}
-        onInputChange={(e) => setInput(e.target.value)}
+        onInputChange={handleInputChange}
         onSend={handleSend}
-        onKeyPress={handleKeyPress}
+        onKeyPress={handleKeyDown}
       />
     </Box>
   );
