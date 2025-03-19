@@ -9,10 +9,10 @@ interface SettingsStore {
 }
 
 const defaultSettings: Settings = {
-  model: 'gpt-4',
-  temperature: 0.7,
-  systemPrompt: 'You are a helpful AI assistant.',
+  currentModel: 'gpt-4',
   selectedModel: 'gpt-4',
+  currentSystemPrompt: 'You are a helpful AI assistant.',
+  systemPrompt: 'You are a helpful AI assistant.',
 };
 
 export const useSettingsStore = create<SettingsStore>()(
@@ -30,6 +30,23 @@ export const useSettingsStore = create<SettingsStore>()(
     }),
     {
       name: 'settings-storage',
+      partialize: (state) => ({
+        settings: {
+          currentModel: state.settings.currentModel,
+          currentSystemPrompt: state.settings.currentSystemPrompt,
+        },
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          // Merge persisted settings with default settings
+          state.settings = {
+            systemPrompt: state.settings.currentSystemPrompt || defaultSettings.currentSystemPrompt,
+            selectedModel: state.settings.currentModel || defaultSettings.selectedModel,
+            currentModel: state.settings.currentModel,
+            currentSystemPrompt: state.settings.currentSystemPrompt,
+          };
+        }
+      },
     }
   )
 ); 

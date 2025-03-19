@@ -11,6 +11,7 @@ export const useUIStore = create<UIStore>()((set) => ({
   activeChatId: null,
   isLoading: false,
   currentWorkflowStep: 0,
+
   setActiveChat: (chatId: string | null) =>
     set(() => ({
       activeChatId: chatId,

@@ -2,18 +2,18 @@ import AddIcon from '@mui/icons-material/Add';
 import {
   Box,
   Button,
+  CircularProgress,
   List,
   Paper,
   Typography,
-  useTheme,
-  CircularProgress
+  useTheme
 } from '@mui/material';
 import React, { useEffect } from 'react';
+import { useChatStore } from '../../../../store/chatStore';
+import { useUIStore } from '../../../../store/uiStore';
 import { ChatListItem } from './ChatListItem';
 import { SettingsSection } from './SettingsSection';
-import { useChatStore } from '../../../../store/chatStore';
 import { useSettingsStore } from '../../../../store/settingsStore';
-import { useUIStore } from '../../../../store/uiStore';
 
 export const Sidebar: React.FC = () => {
   const theme = useTheme();
@@ -120,10 +120,10 @@ export const Sidebar: React.FC = () => {
         borderTop: `1px solid ${theme.palette.divider}`,
         bgcolor: theme.palette.background.paper
       }}>
-        <SettingsSection
+        <SettingsSection 
           settings={settings}
           onChange={updateSettings}
-          onSave={() => {}}
+          onSave={updateSettings}
           onReset={resetSettings}
         />
       </Box>

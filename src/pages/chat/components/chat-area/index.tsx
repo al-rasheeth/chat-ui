@@ -6,6 +6,7 @@ import { ChatInput } from './chat-input';
 import { ChatMessage } from './chat-message';
 import { EmptyState } from './empty-state';
 import { Workflow } from './workflow';
+import { MessageRole } from '../../../../store/types';
 
 export const ChatArea: React.FC = () => {
   const theme = useTheme();
@@ -46,11 +47,12 @@ export const ChatArea: React.FC = () => {
     if (!trimmedInput) return;
 
     let currentChatId = await getActiveChatId();
-
+    
     try {
       const newMessage = {
-        text: trimmedInput,
-        isUser: true
+        role: MessageRole.USER,
+        content: trimmedInput,
+        timestamp: Date.now()
       };
 
       await addMessage(currentChatId, newMessage);
@@ -58,15 +60,24 @@ export const ChatArea: React.FC = () => {
       setLoading(true);
       setWorkflowStep(0);
 
+      // Get the current chat's messages
+      const currentChat = chats.find(chat => chat.id === currentChatId);
+      if (!currentChat) {
+        throw new Error('Chat not found');
+      }
+
+      // Call the mock API endpoint with the entire chat history
       const responsePromise = fetch('/api/chat/send', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message: trimmedInput }),
+        body: JSON.stringify({ 
+          messages: currentChat.messages
+        }),
       });
 
-      // Simulate AI response with workflow steps and make API call concurrently
+            // Simulate AI response with workflow steps and make API call concurrently
       const [response] = await Promise.all([
         responsePromise,
         ...[0, 1, 2, 3, 4, 5].map(async (step) => {
@@ -81,6 +92,8 @@ export const ChatArea: React.FC = () => {
 
       const data = await response.json();
       await addMessage(currentChatId, data.response);
+
+
       setLoading(false);
     } catch (err) {
       console.error('Error sending message:', err);
@@ -135,8 +148,8 @@ export const ChatArea: React.FC = () => {
           activeChat.messages.map((message) => (
             <ChatMessage
               key={message.id}
-              message={message.text}
-              isUser={message.isUser}
+              message={message.content}
+              isUser={message.role === 'user'}
             />
           ))
         )}

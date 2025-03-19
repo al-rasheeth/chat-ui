@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
 import { Chat, Message } from './types';
 
 interface ChatStore {
@@ -83,8 +83,8 @@ export const useChatStore = create<ChatStore>()(
             const updatedChats = state.chats.map((chat) => {
               if (chat.id === chatId) {
                 // If this is the first message and it's from the user, update the title
-                if (chat.messages.length === 0 && message.isUser) {
-                  const title = message.text.slice(0, 50) + (message.text.length > 50 ? '...' : '');
+                if (chat.messages.length === 0 && message.role === 'user') {
+                  const title = message.content.slice(0, 50) + (message.content.length > 50 ? '...' : '');
                   return {
                     ...chat,
                     messages: [...chat.messages, newMessage],
@@ -134,7 +134,6 @@ export const useChatStore = create<ChatStore>()(
     }),
     {
       name: STORAGE_KEY,
-      storage: createJSONStorage(() => localStorage),
     }
   )
-); 
+);

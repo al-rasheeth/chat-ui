@@ -1,4 +1,4 @@
-import { Model, Settings } from './types';
+import { Model } from './types';
 
 export const MODELS: Model[] = [
   {
@@ -22,8 +22,3 @@ export const MODELS: Model[] = [
     description: 'Balanced Claude model for most use cases'
   },
 ];
-
-export const DEFAULT_SETTINGS: Settings = {
-  systemPrompt: '',
-  selectedModel: 'gpt-4'
-}; 

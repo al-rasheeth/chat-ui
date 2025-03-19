@@ -1,7 +1,13 @@
+export enum MessageRole {
+  USER = 'user',
+  ASSISTANT = 'assistant',
+  SYSTEM = 'system'
+}
+
 export interface Message {
   id: string;
-  text: string;
-  isUser: boolean;
+  role: MessageRole;
+  content: string;
   timestamp: number;
 }
 
@@ -14,10 +20,10 @@ export interface Chat {
 }
 
 export interface Settings {
-  model: string;
-  temperature: number;
-  systemPrompt: string;
+  currentModel: string;
   selectedModel: string;
+  currentSystemPrompt: string;
+  systemPrompt: string;
 }
 
 export interface UIState {

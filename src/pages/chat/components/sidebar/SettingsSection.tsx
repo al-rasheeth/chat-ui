@@ -18,9 +18,9 @@ import {
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import React from 'react';
-import { SettingsSectionProps } from './types';
-import { MODELS } from './constants';
 import { InfoTooltip } from '../../../../components';
+import { MODELS } from './constants';
+import { SettingsSectionProps } from './types';
 
 export const SettingsSection: React.FC<SettingsSectionProps> = ({
   settings,
@@ -29,8 +29,21 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({
   onReset
 }) => {
   const theme = useTheme();
+
   const handleModelChange = (event: SelectChangeEvent<string>) => {
     onChange({ selectedModel: event.target.value });
+  };
+
+  const handleSystemPromptChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onChange({ systemPrompt: event.target.value });
+  };
+
+  const handleSave = () => {
+    onSave({ currentModel: settings.selectedModel, currentSystemPrompt: settings.systemPrompt });
+  };
+
+  const handleReset = () => {
+    onReset();
   };
 
   return (
@@ -128,7 +141,7 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({
             multiline
             rows={4}
             value={settings.systemPrompt}
-            onChange={(e) => onChange({ systemPrompt: e.target.value })}
+            onChange={handleSystemPromptChange}
             placeholder="Enter system prompt..."
             sx={{
               fontSize: '0.875rem',
@@ -148,7 +161,7 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({
           <Button
             size="small"
             startIcon={<SaveIcon />}
-            onClick={onSave}
+            onClick={handleSave}
             variant="contained"
             sx={{
               '&:hover': {
@@ -162,7 +175,7 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({
           <Button
             size="small"
             startIcon={<RestartAltIcon />}
-            onClick={onReset}
+            onClick={handleReset}
             variant="outlined"
             sx={{
               '&:hover': {

@@ -1,3 +1,5 @@
+import { Settings } from "../../../../store/types";
+
 export interface Chat {
   id: string;
   title: string;
@@ -10,11 +12,6 @@ export interface Model {
   description?: string;
 }
 
-export interface Settings {
-  systemPrompt: string;
-  selectedModel: string;
-}
-
 export interface ChatListItemProps {
   chat: Chat;
   onDelete: (id: string) => void;
@@ -25,6 +22,6 @@ export interface ChatListItemProps {
 export interface SettingsSectionProps {
   settings: Settings;
   onChange: (settings: Partial<Settings>) => void;
-  onSave: () => void;
+  onSave: (settings: Partial<Settings>) => void;
   onReset: () => void;
-} 
+}
