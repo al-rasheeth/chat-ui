@@ -5,9 +5,10 @@ import {
   List,
   Paper,
   Typography,
-  useTheme
+  useTheme,
+  CircularProgress
 } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ChatListItem } from './ChatListItem';
 import { SettingsSection } from './SettingsSection';
 import { useChatStore } from '../../../../store/chatStore';
@@ -16,19 +17,33 @@ import { useUIStore } from '../../../../store/uiStore';
 
 export const Sidebar: React.FC = () => {
   const theme = useTheme();
-  const { chats, addChat, deleteChat } = useChatStore();
+  const { chats, addChat, deleteChat, fetchChats, isLoading, error } = useChatStore();
   const { settings, updateSettings, resetSettings } = useSettingsStore();
   const { activeChatId, setActiveChat } = useUIStore();
 
-  const handleNewChat = () => {
-    const newChatId = addChat(`Chat ${chats.length + 1}`);
-    setActiveChat(newChatId);
+  useEffect(() => {
+    fetchChats();
+  }, [fetchChats]);
+
+  const handleNewChat = async () => {
+    try {
+      const newChatId = await addChat(`Chat ${chats.length + 1}`);
+      setActiveChat(newChatId);
+    } catch (err) {
+      console.error('Error creating new chat:', err);
+      // You might want to show an error message to the user here
+    }
   };
 
-  const handleDeleteChat = (id: string) => {
-    deleteChat(id);
-    if (activeChatId === id) {
-      setActiveChat(null);
+  const handleDeleteChat = async (id: string) => {
+    try {
+      await deleteChat(id);
+      if (activeChatId === id) {
+        setActiveChat(null);
+      }
+    } catch (err) {
+      console.error('Error deleting chat:', err);
+      // You might want to show an error message to the user here
     }
   };
 
@@ -52,8 +67,9 @@ export const Sidebar: React.FC = () => {
           onClick={handleNewChat}
           fullWidth
           sx={{ mb: 1 }}
+          disabled={isLoading}
         >
-          New Chat
+          {isLoading ? <CircularProgress size={24} /> : 'New Chat'}
         </Button>
       </Box>
 
@@ -77,15 +93,25 @@ export const Sidebar: React.FC = () => {
           Recent Chats
         </Typography>
         <List>
-          {chats.map((chat) => (
-            <ChatListItem
-              key={chat.id}
-              chat={chat}
-              onDelete={handleDeleteChat}
-              isActive={activeChatId === chat.id}
-              onClick={() => setActiveChat(chat.id)}
-            />
-          ))}
+          {isLoading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
+              <CircularProgress />
+            </Box>
+          ) : error ? (
+            <Typography color="error" sx={{ px: 2, py: 1 }}>
+              {error}
+            </Typography>
+          ) : (
+            chats.map((chat) => (
+              <ChatListItem
+                key={chat.id}
+                chat={chat}
+                onDelete={handleDeleteChat}
+                isActive={activeChatId === chat.id}
+                onClick={() => setActiveChat(chat.id)}
+              />
+            ))
+          )}
         </List>
       </Box>
 

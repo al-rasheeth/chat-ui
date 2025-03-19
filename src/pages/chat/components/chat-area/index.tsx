@@ -32,43 +32,52 @@ export const ChatArea: React.FC = () => {
     inputRef.current?.focus();
   };
 
-  const handleSend = () => {
+  const getActiveChatId = async () => {
+    if (!activeChatId) {
+      const newChatId = await addChat('New Chat');
+      setActiveChat(newChatId);
+      return newChatId;
+    }
+    return activeChatId;
+  };
+
+  const handleSend = async () => {
     const trimmedInput = input.trim();
     if (!trimmedInput) return;
 
-    let currentChatId = activeChatId;
+    let currentChatId = await getActiveChatId();
     
-    // Create new chat if none exists
-    if (!currentChatId) {
-      currentChatId = addChat('New Chat');
-      setActiveChat(currentChatId);
-    }
+    try {
+      const newMessage = {
+        text: trimmedInput,
+        isUser: true
+      };
 
-    const newMessage = {
-      text: trimmedInput,
-      isUser: true
-    };
+      await addMessage(currentChatId, newMessage);
+      setInput('');
+      setLoading(true);
+      setWorkflowStep(0);
 
-    addMessage(currentChatId as string, newMessage);
-    setInput('');
-    setLoading(true);
-    setWorkflowStep(0);
-
-    // Simulate AI response with workflow steps
-    const steps = [0, 1, 2, 3, 4, 5];
-    steps.forEach((step, index) => {
-      setTimeout(() => {
-        setWorkflowStep(step);
-        if (index === steps.length - 1) {
+      // Simulate AI response with workflow steps
+      const steps = [0, 1, 2, 3, 4, 5];
+      for (let i = 0; i < steps.length; i++) {
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Each step takes 1 second
+        setWorkflowStep(steps[i]);
+        
+        if (i === steps.length - 1) {
           const aiResponse = {
             text: "This is a simulated AI response. In a real application, this would be replaced with actual AI-generated content.",
             isUser: false
           };
-          addMessage(currentChatId as string, aiResponse);
+          await addMessage(currentChatId, aiResponse);
           setLoading(false);
         }
-      }, index * 1000); // Each step takes 1 second
-    });
+      }
+    } catch (err) {
+      console.error('Error sending message:', err);
+      setLoading(false);
+      // You might want to show an error message to the user here
+    }
   };
 
   const handleSuggestionClick = (suggestion: string) => {
@@ -140,3 +149,4 @@ export const ChatArea: React.FC = () => {
     </Box>
   );
 };
+

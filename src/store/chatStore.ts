@@ -1,73 +1,126 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { Chat, Message } from './types';
 
 interface ChatStore {
   chats: Chat[];
-  addChat: (title: string) => string;
-  deleteChat: (id: string) => void;
-  addMessage: (chatId: string, message: Omit<Message, 'id' | 'timestamp'>) => void;
-  updateChatTitle: (chatId: string, title: string) => void;
+  isLoading: boolean;
+  error: string | null;
+  addChat: (title: string) => Promise<string>;
+  deleteChat: (id: string) => Promise<void>;
+  addMessage: (chatId: string, message: Omit<Message, 'id' | 'timestamp'>) => Promise<void>;
+  updateChatTitle: (chatId: string, title: string) => Promise<void>;
+  fetchChats: () => Promise<void>;
 }
+
+const STORAGE_KEY = 'chat-storage';
 
 export const useChatStore = create<ChatStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       chats: [],
-      addChat: (title: string) => {
-        const newChatId = Date.now().toString();
-        set((state) => ({
-          chats: [
-            {
-              id: newChatId,
-              title,
-              messages: [],
-              timestamp: Date.now(),
-              lastUpdated: Date.now(),
-            },
-            ...state.chats,
-          ],
-        }));
-        return newChatId;
+      isLoading: false,
+      error: null,
+
+      fetchChats: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          const storedData = localStorage.getItem(STORAGE_KEY);
+          if (storedData) {
+            const { state } = JSON.parse(storedData);
+            set({ chats: state.chats, isLoading: false });
+          }
+        } catch (error) {
+          set({ error: error instanceof Error ? error.message : 'Failed to fetch chats', isLoading: false });
+        }
       },
-      deleteChat: (id: string) =>
-        set((state) => ({
-          chats: state.chats.filter((chat) => chat.id !== id),
-        })),
-      addMessage: (chatId: string, message: Omit<Message, 'id' | 'timestamp'>) =>
-        set((state) => ({
-          chats: state.chats.map((chat) =>
-            chat.id === chatId
-              ? {
-                  ...chat,
-                  messages: [
-                    ...chat.messages,
-                    {
-                      ...message,
-                      id: Date.now().toString(),
-                      timestamp: Date.now(),
-                    },
-                  ],
-                  lastUpdated: Date.now(),
-                }
-              : chat
-          ),
-        })),
-      updateChatTitle: (chatId: string, title: string) =>
-        set((state) => ({
-          chats: state.chats.map((chat) =>
-            chat.id === chatId
-              ? {
-                  ...chat,
-                  title,
-                  lastUpdated: Date.now(),
-                }
-              : chat
-          ),
-        })),
+
+      addChat: async (title: string) => {
+        set({ isLoading: true, error: null });
+        try {
+          const newChat: Chat = {
+            id: Date.now().toString(),
+            title,
+            messages: [],
+            timestamp: Date.now(),
+            lastUpdated: Date.now(),
+          };
+          
+          set((state) => ({
+            chats: [newChat, ...state.chats],
+            isLoading: false,
+          }));
+          return newChat.id;
+        } catch (error) {
+          set({ error: error instanceof Error ? error.message : 'Failed to create chat', isLoading: false });
+          throw error;
+        }
+      },
+
+      deleteChat: async (id: string) => {
+        set({ isLoading: true, error: null });
+        try {
+          set((state) => ({
+            chats: state.chats.filter((chat) => chat.id !== id),
+            isLoading: false,
+          }));
+        } catch (error) {
+          set({ error: error instanceof Error ? error.message : 'Failed to delete chat', isLoading: false });
+          throw error;
+        }
+      },
+
+      addMessage: async (chatId: string, message: Omit<Message, 'id' | 'timestamp'>) => {
+        set({ isLoading: true, error: null });
+        try {
+          const newMessage: Message = {
+            ...message,
+            id: Date.now().toString(),
+            timestamp: Date.now(),
+          };
+
+          set((state) => ({
+            chats: state.chats.map((chat) =>
+              chat.id === chatId
+                ? {
+                    ...chat,
+                    messages: [...chat.messages, newMessage],
+                    lastUpdated: Date.now(),
+                  }
+                : chat
+            ),
+            isLoading: false,
+          }));
+        } catch (error) {
+          set({ error: error instanceof Error ? error.message : 'Failed to add message', isLoading: false });
+          throw error;
+        }
+      },
+
+      updateChatTitle: async (chatId: string, title: string) => {
+        set({ isLoading: true, error: null });
+        try {
+          set((state) => ({
+            chats: state.chats.map((chat) =>
+              chat.id === chatId
+                ? {
+                    ...chat,
+                    title,
+                    lastUpdated: Date.now(),
+                  }
+                : chat
+            ),
+            isLoading: false,
+          }));
+        } catch (error) {
+          set({ error: error instanceof Error ? error.message : 'Failed to update chat title', isLoading: false });
+          throw error;
+        }
+      },
     }),
     {
-      name: 'chat-storage',
+      name: STORAGE_KEY,
+      storage: createJSONStorage(() => localStorage),
     }
   )
 ); 
