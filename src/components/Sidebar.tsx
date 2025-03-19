@@ -113,7 +113,6 @@ const ChatListItem: React.FC<ChatListItemProps> = ({
         cursor: 'pointer',
         borderRadius: 1,
         mb: 0.5,
-        transition: 'all 0.2s ease',
         '&:hover': {
           backgroundColor: isActive 
             ? alpha(theme.palette.primary.main, 0.15)
@@ -158,7 +157,9 @@ const ChatListItem: React.FC<ChatListItemProps> = ({
           }}
           sx={{ 
             opacity: 0,
-            transition: 'opacity 0.2s ease'
+            '&:hover': {
+              color: theme.palette.error.main
+            }
           }}
         >
           <DeleteOutlineIcon fontSize="small" />

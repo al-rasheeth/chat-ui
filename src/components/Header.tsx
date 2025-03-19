@@ -27,7 +27,6 @@ const Header: React.FC = () => {
       elevation={0}
       sx={{
         borderBottom: `1px solid ${theme.palette.divider}`,
-        transition: 'all 0.3s ease',
         backdropFilter: 'blur(8px)',
         backgroundColor: 'rgba(255, 255, 255, 0.8)',
       }}
@@ -39,7 +38,6 @@ const Header: React.FC = () => {
               display: 'flex',
               alignItems: 'center',
               mr: 2,
-              transition: 'transform 0.3s ease',
               '&:hover': {
                 transform: 'scale(1.05)'
               }
@@ -53,7 +51,6 @@ const Header: React.FC = () => {
                 justifyContent: 'center',
                 width: 40,
                 height: 40,
-                borderRadius: '50%',
                 backgroundColor: 'rgba(25, 118, 210, 0.05)',
                 mr: 1.5,
                 overflow: 'hidden',
@@ -87,8 +84,7 @@ const Header: React.FC = () => {
             </Box>
             <Typography 
               variant="h6" 
-              component="div" 
-              className="animated-gradient-text"
+              component="div"
               sx={{ 
                 fontWeight: 700,
                 background: 'linear-gradient(45deg, #1976d2, #42a5f5, #1976d2, #42a5f5)',
@@ -108,7 +104,6 @@ const Header: React.FC = () => {
               <IconButton 
                 color="inherit"
                 sx={{
-                  transition: 'all 0.2s ease',
                   '&:hover': {
                     transform: 'scale(1.1)',
                     color: theme.palette.primary.main
@@ -123,7 +118,6 @@ const Header: React.FC = () => {
               <IconButton 
                 color="inherit"
                 sx={{
-                  transition: 'all 0.2s ease',
                   '&:hover': {
                     transform: 'scale(1.1)',
                     color: theme.palette.primary.main
@@ -138,7 +132,6 @@ const Header: React.FC = () => {
               <IconButton 
                 color="inherit"
                 sx={{
-                  transition: 'all 0.2s ease',
                   '&:hover': {
                     transform: 'scale(1.1)',
                     color: theme.palette.primary.main

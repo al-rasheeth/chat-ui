@@ -238,7 +238,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isUser }) => {
               : theme.palette.secondary.main,
             m: 1,
             boxShadow: theme.shadows[2],
-            transition: 'all 0.3s ease',
             '&:hover': {
               transform: 'scale(1.1)',
               boxShadow: theme.shadows[4]
@@ -268,7 +267,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isUser }) => {
                 right: isUser ? 'auto' : 0,
                 left: isUser ? 0 : 'auto',
                 opacity: 0,
-                transition: 'opacity 0.2s ease',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 0.5,
@@ -288,7 +286,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isUser }) => {
                 top: 8,
                 right: 8,
                 opacity: 0,
-                transition: 'opacity 0.2s ease',
                 color: 'text.secondary',
                 '&:hover': {
                   color: 'primary.main'
