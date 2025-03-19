@@ -1,37 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Box, 
-  List, 
-  ListItem, 
-  ListItemText, 
-  ListItemIcon,
-  Button,
-  Divider,
-  useTheme,
-  Tooltip,
-  IconButton,
-  TextField,
-  Select,
-  MenuItem,
-  Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  SelectChangeEvent,
-  Paper,
-  Fade,
-  Chip
-} from '@mui/material';
-import { alpha } from '@mui/material/styles';
-import ChatIcon from '@mui/icons-material/Chat';
 import AddIcon from '@mui/icons-material/Add';
+import ChatIcon from '@mui/icons-material/Chat';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import SettingsIcon from '@mui/icons-material/Settings';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
-import SaveIcon from '@mui/icons-material/Save';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import SaveIcon from '@mui/icons-material/Save';
+import SettingsIcon from '@mui/icons-material/Settings';
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Button,
+  IconButton,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
+  Paper,
+  Select,
+  SelectChangeEvent,
+  TextField,
+  Tooltip,
+  Typography,
+  useTheme,
+} from '@mui/material';
+import { alpha } from '@mui/material/styles';
+import React, { useState } from 'react';
 
 // Types
 interface Chat {
@@ -53,22 +50,22 @@ interface Settings {
 
 // Constants
 const MODELS: Model[] = [
-  { 
+  {
     value: 'gpt-4',
     label: 'GPT-4',
     description: 'Most capable GPT model for complex tasks'
   },
-  { 
+  {
     value: 'gpt-3.5-turbo',
     label: 'GPT-3.5 Turbo',
     description: 'Faster and more cost-effective for simpler tasks'
   },
-  { 
+  {
     value: 'claude-3-opus',
     label: 'Claude 3 Opus',
     description: 'Most powerful Claude model with enhanced capabilities'
   },
-  { 
+  {
     value: 'claude-3-sonnet',
     label: 'Claude 3 Sonnet',
     description: 'Balanced Claude model for most use cases'
@@ -96,16 +93,16 @@ interface ChatListItemProps {
   onClick: () => void;
 }
 
-const ChatListItem: React.FC<ChatListItemProps> = ({ 
-  chat, 
-  onDelete, 
-  isActive, 
-  onClick 
+const ChatListItem: React.FC<ChatListItemProps> = ({
+  chat,
+  onDelete,
+  isActive,
+  onClick
 }) => {
   const theme = useTheme();
-  
+
   return (
-    <ListItem 
+    <ListItem
       component="div"
       onClick={onClick}
       sx={{
@@ -114,7 +111,7 @@ const ChatListItem: React.FC<ChatListItemProps> = ({
         borderRadius: 1,
         mb: 0.5,
         '&:hover': {
-          backgroundColor: isActive 
+          backgroundColor: isActive
             ? alpha(theme.palette.primary.main, 0.15)
             : theme.palette.action.hover,
           transform: 'translateX(4px)',
@@ -127,7 +124,7 @@ const ChatListItem: React.FC<ChatListItemProps> = ({
       <ListItemIcon>
         <ChatIcon color={isActive ? "primary" : "inherit"} />
       </ListItemIcon>
-      <ListItemText 
+      <ListItemText
         primary={chat.title}
         secondary={new Date(chat.timestamp).toLocaleDateString()}
         primaryTypographyProps={{
@@ -148,14 +145,14 @@ const ChatListItem: React.FC<ChatListItemProps> = ({
         }}
       />
       <Tooltip title="Delete chat">
-        <IconButton 
+        <IconButton
           size="small"
           className="delete-icon"
           onClick={(e) => {
             e.stopPropagation();
             onDelete(chat.id);
           }}
-          sx={{ 
+          sx={{
             opacity: 0,
             '&:hover': {
               color: theme.palette.error.main
@@ -176,11 +173,11 @@ interface SettingsSectionProps {
   onReset: () => void;
 }
 
-const SettingsSection: React.FC<SettingsSectionProps> = ({ 
-  settings, 
-  onChange, 
-  onSave, 
-  onReset 
+const SettingsSection: React.FC<SettingsSectionProps> = ({
+  settings,
+  onChange,
+  onSave,
+  onReset
 }) => {
   const theme = useTheme();
   const handleModelChange = (event: SelectChangeEvent<string>) => {
@@ -201,7 +198,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
     >
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
-        sx={{ 
+        sx={{
           p: 0,
           minHeight: 40,
           '& .MuiAccordionSummary-content': { my: 0 }
@@ -225,11 +222,10 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
             size="small"
             value={settings.selectedModel}
             onChange={handleModelChange}
-            sx={{ 
+            sx={{
               fontSize: '0.875rem',
               '& .MuiOutlinedInput-notchedOutline': {
                 borderColor: 'rgba(0, 0, 0, 0.1)',
-                transition: 'all 0.3s ease',
                 '&:hover': {
                   borderColor: 'rgba(0, 0, 0, 0.2)',
                 }
@@ -237,13 +233,13 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
             }}
           >
             {MODELS.map((model) => (
-              <MenuItem 
-                key={model.value} 
+              <MenuItem
+                key={model.value}
                 value={model.value}
-                sx={{ 
+                sx={{
                   display: 'block',
                   py: 1.5,
-                  borderBottom: model.value !== MODELS[MODELS.length-1].value ? 
+                  borderBottom: model.value !== MODELS[MODELS.length - 1].value ?
                     `1px solid ${alpha(theme.palette.divider, 0.5)}` : 'none'
                 }}
               >
@@ -252,11 +248,11 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
                   <Typography variant="body2" fontWeight={600}>{model.label}</Typography>
                 </Box>
                 {model.description && (
-                  <Typography 
-                    variant="caption" 
-                    color="text.secondary" 
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
                     display="block"
-                    sx={{ 
+                    sx={{
                       ml: 4,
                       lineHeight: 1.3,
                       maxWidth: '100%',
@@ -285,11 +281,10 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
             value={settings.systemPrompt}
             onChange={(e) => onChange({ systemPrompt: e.target.value })}
             placeholder="Enter system prompt..."
-            sx={{ 
+            sx={{
               fontSize: '0.875rem',
               '& .MuiOutlinedInput-root': {
                 fontSize: '0.875rem',
-                transition: 'all 0.3s ease',
                 '&:hover': {
                   boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
                 },
@@ -307,7 +302,6 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
             onClick={onSave}
             variant="contained"
             sx={{
-              transition: 'all 0.2s ease',
               '&:hover': {
                 transform: 'translateY(-2px)',
                 boxShadow: theme.shadows[4]
@@ -322,7 +316,6 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
             onClick={onReset}
             variant="outlined"
             sx={{
-              transition: 'all 0.2s ease',
               '&:hover': {
                 transform: 'translateY(-2px)',
                 boxShadow: theme.shadows[2]
@@ -341,7 +334,6 @@ const Sidebar: React.FC = () => {
   const theme = useTheme();
   const [chats, setChats] = useState<Chat[]>([]);
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
-  const [settingsExpanded, setSettingsExpanded] = useState(false);
   const [activeChat, setActiveChat] = useState<string | null>(null);
 
   const handleSettingsChange = (newSettings: Partial<Settings>) => {
@@ -373,7 +365,7 @@ const Sidebar: React.FC = () => {
       setActiveChat(null);
     }
   };
-  
+
   return (
     <Paper
       elevation={0}
@@ -398,9 +390,9 @@ const Sidebar: React.FC = () => {
           New Chat
         </Button>
       </Box>
-      
-      <Box sx={{ 
-        flex: 1, 
+
+      <Box sx={{
+        flex: 1,
         overflow: 'auto',
         px: 1,
         py: 1
@@ -418,8 +410,8 @@ const Sidebar: React.FC = () => {
         </List>
       </Box>
 
-      <Box sx={{ 
-        p: 2, 
+      <Box sx={{
+        p: 2,
         borderTop: `1px solid ${theme.palette.divider}`,
         bgcolor: theme.palette.background.paper
       }}>

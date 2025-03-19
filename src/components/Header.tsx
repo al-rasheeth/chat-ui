@@ -152,7 +152,6 @@ const Header: React.FC = () => {
                   ml: 0.5,
                   cursor: 'pointer',
                   bgcolor: theme.palette.primary.main,
-                  transition: 'all 0.3s ease',
                   '&:hover': {
                     transform: 'scale(1.1)',
                     boxShadow: theme.shadows[3]
