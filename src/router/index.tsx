@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import MainLayout from '../layouts/MainLayout';
-import ChatPage from '../pages/chat';
-import SettingsPage from '../pages/settings';
-import NotFoundPage from '../pages/not-found';
+import { MainLayout } from '../layouts/MainLayout';
+import { ChatPage } from '../pages/chat';
+import { SettingsPage } from '../pages/settings';
+import { NotFoundPage } from '../pages/not-found';
 
-const AppRouter: React.FC = () => {
+export const AppRouter: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
@@ -18,6 +18,4 @@ const AppRouter: React.FC = () => {
       </Routes>
     </BrowserRouter>
   );
-};
-
-export default AppRouter; 
+}; 

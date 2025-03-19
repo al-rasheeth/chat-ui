@@ -17,7 +17,7 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-const Header: React.FC = () => {
+export const Header: React.FC = () => {
   const theme = useTheme();
   
   return (
@@ -167,5 +167,3 @@ const Header: React.FC = () => {
     </AppBar>
   );
 };
-
-export default Header; 

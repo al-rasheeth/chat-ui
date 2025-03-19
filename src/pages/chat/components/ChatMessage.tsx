@@ -203,7 +203,7 @@ interface ChatMessageProps {
   isUser: boolean;
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ message, isUser }) => {
+export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isUser }) => {
   const theme = useTheme();
   const [copied, setCopied] = React.useState<boolean>(false);
   const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -299,5 +299,3 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isUser }) => {
     </Grow>
   );
 };
-
-export default ChatMessage; 

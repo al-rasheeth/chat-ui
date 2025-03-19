@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 import { keyframes, styled } from '@mui/material/styles';
 import React, { JSX, useEffect, useState } from 'react';
-import ChatMessage from './ChatMessage';
+import { ChatMessage } from './ChatMessage';
 
 // Empty state suggestions
 const SUGGESTIONS: string[] = [
@@ -257,7 +257,7 @@ interface Message {
   isUser: boolean;
 }
 
-const ChatArea: React.FC = () => {
+export const ChatArea: React.FC = () => {
   const theme = useTheme();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -496,5 +496,3 @@ const ChatArea: React.FC = () => {
     </Box>
   );
 };
-
-export default ChatArea; 

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Box, CssBaseline } from '@mui/material';
-import Header from '../components/common/Header';
-import Sidebar from '../pages/chat/components/Sidebar';
+import { Header } from '../components';
+import { Sidebar } from '../pages/chat/components';
 
-const MainLayout: React.FC = () => {
+export const MainLayout: React.FC = () => {
   return (
     <Box sx={{ 
       display: 'flex', 
@@ -23,6 +23,4 @@ const MainLayout: React.FC = () => {
       </Box>
     </Box>
   );
-};
-
-export default MainLayout; 
+}; 

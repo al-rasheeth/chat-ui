@@ -1,8 +1,8 @@
 import React from 'react';
 import { ThemeProvider, createTheme } from '@mui/material';
-import AppRouter from './router';
+import { AppRouter } from './router';
 
-const App: React.FC = () => {
+export const App: React.FC = () => {
   const theme = createTheme({
     palette: {
       mode: 'light',
@@ -75,6 +75,4 @@ const App: React.FC = () => {
       <AppRouter />
     </ThemeProvider>
   );
-};
-
-export default App; 
+}; 

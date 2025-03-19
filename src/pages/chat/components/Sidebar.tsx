@@ -330,7 +330,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
   );
 };
 
-const Sidebar: React.FC = () => {
+export const Sidebar: React.FC = () => {
   const theme = useTheme();
   const [chats, setChats] = useState<Chat[]>([]);
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
@@ -425,5 +425,3 @@ const Sidebar: React.FC = () => {
     </Paper>
   );
 };
-
-export default Sidebar; 
