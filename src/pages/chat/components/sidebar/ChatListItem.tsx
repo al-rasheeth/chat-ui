@@ -1,7 +1,7 @@
 import ChatIcon from '@mui/icons-material/Chat';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { alpha, IconButton, ListItem, ListItemIcon, ListItemText, Tooltip, useTheme } from '@mui/material';
-import { ChatListItemProps } from '../types';
+import { ChatListItemProps } from './types';
 
 export const ChatListItem: React.FC<ChatListItemProps> = ({
   chat,

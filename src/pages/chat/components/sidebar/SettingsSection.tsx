@@ -18,9 +18,9 @@ import {
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import React from 'react';
-import { SettingsSectionProps } from '../types';
-import { MODELS } from '../constants';
-import { InfoTooltip } from './InfoTooltip';
+import { SettingsSectionProps } from './types';
+import { MODELS } from './constants';
+import { InfoTooltip } from '../../../../components';
 
 export const SettingsSection: React.FC<SettingsSectionProps> = ({
   settings,

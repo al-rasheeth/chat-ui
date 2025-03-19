@@ -7,15 +7,18 @@ import {
   useTheme
 } from '@mui/material';
 import React, { useState } from 'react';
-import { ChatListItem } from './components/ChatListItem';
-import { SettingsSection } from './components/SettingsSection';
+import { ChatListItem } from './ChatListItem';
+import { SettingsSection } from './SettingsSection';
 import { DEFAULT_SETTINGS } from './constants';
 import { Chat, Settings } from './types';
 
 export const Sidebar: React.FC = () => {
   const theme = useTheme();
   const [chats, setChats] = useState<Chat[]>([]);
-  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState<Settings>(() => {
+    const savedSettings = localStorage.getItem('chatSettings');
+    return savedSettings ? JSON.parse(savedSettings) : DEFAULT_SETTINGS;
+  });
   const [activeChat, setActiveChat] = useState<string | null>(null);
 
   const handleSettingsChange = (newSettings: Partial<Settings>) => {
