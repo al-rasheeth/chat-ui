@@ -48,15 +48,21 @@ export const ChatArea: React.FC = () => {
     setIsLoading(true);
     setCurrentStep(0);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const aiResponse: Message = {
-        text: "This is a simulated AI response. In a real application, this would be replaced with actual AI-generated content.",
-        isUser: false
-      };
-      setMessages(prev => [...prev, aiResponse]);
-      setIsLoading(false);
-    }, 3000);
+    // Simulate AI response with workflow steps
+    const steps = [0, 1, 2, 3, 4, 5];
+    steps.forEach((step, index) => {
+      setTimeout(() => {
+        setCurrentStep(step);
+        if (index === steps.length - 1) {
+          const aiResponse: Message = {
+            text: "This is a simulated AI response. In a real application, this would be replaced with actual AI-generated content.",
+            isUser: false
+          };
+          setMessages(prev => [...prev, aiResponse]);
+          setIsLoading(false);
+        }
+      }, index * 1000); // Each step takes 1 second
+    });
   };
 
   const handleSuggestionClick = (suggestion: string) => {
@@ -108,6 +114,9 @@ export const ChatArea: React.FC = () => {
         )}
         <div ref={messagesEndRef} />
       </Box>
+
+      {/* Workflow Progress */}
+      {isLoading && <Workflow currentStep={currentStep} />}
 
       {/* Input Area */}
       <ChatInput
