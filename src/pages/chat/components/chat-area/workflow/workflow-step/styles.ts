@@ -15,7 +15,7 @@ interface WorkflowStepIconRootProps {
 
 export const ArrowConnector = styled('div')<ArrowConnectorProps>(({ theme, active, completed }) => ({
   position: 'absolute',
-  top: '50%',
+  top: '25%',
   left: 'calc(100% - 15px)',
   transform: 'translateY(-50%)',
   zIndex: 2,
