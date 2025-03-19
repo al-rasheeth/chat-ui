@@ -4,6 +4,7 @@ import {
   Button,
   List,
   Paper,
+  Typography,
   useTheme
 } from '@mui/material';
 import React, { useState } from 'react';
@@ -82,6 +83,19 @@ export const Sidebar: React.FC = () => {
         px: 1,
         py: 1
       }}>
+        <Typography
+          variant="caption"
+          sx={{
+            px: 2,
+            py: 1,
+            color: 'text.secondary',
+            fontWeight: 500,
+            textTransform: 'uppercase',
+            letterSpacing: 0.5
+          }}
+        >
+          Recent Chats
+        </Typography>
         <List>
           {chats.map((chat) => (
             <ChatListItem
