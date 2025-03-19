@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import ChatArea from '../components/ChatArea';
+import ChatArea from '../components/chat/ChatArea';
 
 const ChatPage: React.FC = () => {
   return (
