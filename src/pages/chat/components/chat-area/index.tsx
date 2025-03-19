@@ -1,11 +1,11 @@
 import { Box, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { ChatMessage } from './chat-message';
-import { Workflow } from './workflow';
-import { EmptyState } from './empty-state';
-import { ChatInput } from './chat-input';
 import { useChatStore } from '../../../../store/chatStore';
 import { useUIStore } from '../../../../store/uiStore';
+import { ChatInput } from './chat-input';
+import { ChatMessage } from './chat-message';
+import { EmptyState } from './empty-state';
+import { Workflow } from './workflow';
 
 export const ChatArea: React.FC = () => {
   const theme = useTheme();
@@ -46,7 +46,7 @@ export const ChatArea: React.FC = () => {
     if (!trimmedInput) return;
 
     let currentChatId = await getActiveChatId();
-    
+
     try {
       const newMessage = {
         text: trimmedInput,
@@ -58,21 +58,30 @@ export const ChatArea: React.FC = () => {
       setLoading(true);
       setWorkflowStep(0);
 
-      // Simulate AI response with workflow steps
-      const steps = [0, 1, 2, 3, 4, 5];
-      for (let i = 0; i < steps.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Each step takes 1 second
-        setWorkflowStep(steps[i]);
-        
-        if (i === steps.length - 1) {
-          const aiResponse = {
-            text: "This is a simulated AI response. In a real application, this would be replaced with actual AI-generated content.",
-            isUser: false
-          };
-          await addMessage(currentChatId, aiResponse);
-          setLoading(false);
-        }
+      const responsePromise = fetch('/api/chat/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: trimmedInput }),
+      });
+
+      // Simulate AI response with workflow steps and make API call concurrently
+      const [response] = await Promise.all([
+        responsePromise,
+        ...[0, 1, 2, 3, 4, 5].map(async (step) => {
+          await new Promise(resolve => setTimeout(resolve, 500));
+          setWorkflowStep(step);
+        })
+      ]);
+
+      if (!response.ok) {
+        throw new Error('Failed to send message');
       }
+
+      const data = await response.json();
+      await addMessage(currentChatId, data.response);
+      setLoading(false);
     } catch (err) {
       console.error('Error sending message:', err);
       setLoading(false);
