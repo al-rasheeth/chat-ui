@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
-import ChatPage from '../pages/ChatPage';
-import SettingsPage from '../pages/SettingsPage';
-import NotFoundPage from '../pages/NotFoundPage';
+import ChatPage from '../pages/chat';
+import SettingsPage from '../pages/settings';
+import NotFoundPage from '../pages/not-found';
 
 const AppRouter: React.FC = () => {
   return (
