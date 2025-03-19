@@ -112,7 +112,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ onSuggestionClick }) => 
                   onClick={() => onSuggestionClick(suggestion)}
                   sx={{
                     transition: 'all 0.3s ease',
-                    animation: `${buttonPop} 2s ease-in-out infinite`,
+                    animation: `${buttonPop} 2s ease-in-out 3`,
                     '&:hover': {
                       transform: 'translateY(-2px)',
                       boxShadow: theme.shadows[2]
