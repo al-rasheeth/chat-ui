@@ -1,25 +1,24 @@
-import React from 'react';
-import { 
-  Box, 
-  Avatar, 
-  Typography, 
-  Paper, 
-  useTheme, 
-  IconButton, 
-  Tooltip, 
-  Grow,
-  Chip
-} from '@mui/material';
-import ReactMarkdown from 'react-markdown';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DoneIcon from '@mui/icons-material/Done';
 import PersonIcon from '@mui/icons-material/Person';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import rehypeRaw from 'rehype-raw';
-import rehypeSanitize from 'rehype-sanitize';
+import {
+  Avatar,
+  Box,
+  Chip,
+  Grow,
+  IconButton,
+  Paper,
+  Typography,
+  useTheme
+} from '@mui/material';
+import React from 'react';
+import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import rehypeRaw from 'rehype-raw';
+import rehypeSanitize from 'rehype-sanitize';
 
 interface MarkdownRendererProps {
   content: string;
@@ -36,9 +35,9 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
           </Typography>
         ),
         h1: ({ children }) => (
-          <Typography variant="h5" component="h1" sx={{ 
-            mb: 2, 
-            mt: 1, 
+          <Typography variant="h5" component="h1" sx={{
+            mb: 2,
+            mt: 1,
             fontWeight: 'bold',
             borderBottom: '1px solid',
             borderColor: 'divider',
@@ -48,9 +47,9 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
           </Typography>
         ),
         h2: ({ children }) => (
-          <Typography variant="h6" component="h2" sx={{ 
-            mb: 1.5, 
-            mt: 1, 
+          <Typography variant="h6" component="h2" sx={{
+            mb: 1.5,
+            mt: 1,
             fontWeight: 'bold',
             borderBottom: '1px solid',
             borderColor: 'divider',
@@ -70,7 +69,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
         }) => {
           const match = /language-(\w+)/.exec(className || '');
           const language = match ? match[1] : '';
-          
+
           if (inline) {
             return (
               <Box
@@ -88,32 +87,32 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
               </Box>
             );
           }
-          
+
           return (
-            <Box sx={{ 
-              my: 2, 
-              borderRadius: 2, 
+            <Box sx={{
+              my: 2,
+              borderRadius: 2,
               overflow: 'hidden',
               position: 'relative'
             }}>
               {language && (
-                <Box sx={{ 
-                  position: 'absolute', 
-                  top: 0, 
-                  right: 0, 
-                  zIndex: 1, 
+                <Box sx={{
+                  position: 'absolute',
+                  top: 0,
+                  right: 0,
+                  zIndex: 1,
                   p: 0.5,
                   pr: 1.5
                 }}>
-                  <Chip 
-                    label={language} 
-                    size="small" 
-                    sx={{ 
-                      height: 20, 
+                  <Chip
+                    label={language}
+                    size="small"
+                    sx={{
+                      height: 20,
                       fontSize: '0.7rem',
                       backgroundColor: 'rgba(0, 0, 0, 0.06)',
                       color: 'rgba(0, 0, 0, 0.7)'
-                    }} 
+                    }}
                   />
                 </Box>
               )}
@@ -233,8 +232,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isUser }) => {
       >
         <Avatar
           sx={{
-            bgcolor: isUser 
-              ? theme.palette.primary.main 
+            bgcolor: isUser
+              ? theme.palette.primary.main
               : theme.palette.secondary.main,
             m: 1,
             boxShadow: theme.shadows[2],
@@ -251,8 +250,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isUser }) => {
             elevation={2}
             sx={{
               p: 2,
-              bgcolor: isUser 
-                ? `${theme.palette.primary.main}15` 
+              bgcolor: isUser
+                ? `${theme.palette.primary.main}15`
                 : `${theme.palette.background.paper}`,
               borderRadius: 2,
               position: 'relative',

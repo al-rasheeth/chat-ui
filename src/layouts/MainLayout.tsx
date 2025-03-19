@@ -2,7 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Box, CssBaseline } from '@mui/material';
 import Header from '../components/common/Header';
-import Sidebar from '../components/chat/Sidebar';
+import Sidebar from '../pages/chat/components/Sidebar';
 
 const MainLayout: React.FC = () => {
   return (

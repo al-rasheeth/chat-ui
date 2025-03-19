@@ -1,32 +1,26 @@
-import React, { useState, useEffect, JSX } from 'react';
-import { 
-  Box, 
-  TextField, 
-  IconButton, 
-  Paper,
-  useTheme,
-  CircularProgress,
-  Tooltip,
-  Typography,
-  Button,
-  Fade,
-  Zoom,
-  InputAdornment
-} from '@mui/material';
-import { styled, keyframes } from '@mui/material/styles';
-import SendIcon from '@mui/icons-material/Send';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
-import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
+import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import KeyboardIcon from '@mui/icons-material/Keyboard';
-import ChatMessage from './ChatMessage';
-import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import PsychologyIcon from '@mui/icons-material/Psychology';
-import MemoryIcon from '@mui/icons-material/Memory';
 import DataObjectIcon from '@mui/icons-material/DataObject';
 import FactCheckIcon from '@mui/icons-material/FactCheck';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
-import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
+import MemoryIcon from '@mui/icons-material/Memory';
+import PsychologyIcon from '@mui/icons-material/Psychology';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import SendIcon from '@mui/icons-material/Send';
+import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  Paper,
+  TextField,
+  Typography,
+  useTheme
+} from '@mui/material';
+import { keyframes, styled } from '@mui/material/styles';
+import React, { JSX, useEffect, useState } from 'react';
+import ChatMessage from './ChatMessage';
 
 // Empty state suggestions
 const SUGGESTIONS: string[] = [
@@ -114,14 +108,14 @@ const ArrowConnector = styled('div')<ArrowConnectorProps>(({ theme, active, comp
   zIndex: 2,
   display: 'flex',
   alignItems: 'center',
-  color: active || completed 
-    ? theme.palette.primary.main 
+  color: active || completed
+    ? theme.palette.primary.main
     : theme.palette.grey[400],
   transition: 'all 0.5s ease',
   '& svg': {
     fontSize: 30,
     animation: active ? `${slideRight} 0.5s ease forwards` : 'none',
-    filter: active || completed 
+    filter: active || completed
       ? `drop-shadow(0 0 3px ${theme.palette.primary.main})`
       : 'none',
   }
@@ -205,27 +199,27 @@ interface WorkflowStepProps {
 // Custom step component with arrow
 const WorkflowStep: React.FC<WorkflowStepProps> = ({ index, active, completed, last, label, description }) => {
   const theme = useTheme();
-  
+
   return (
-    <Box sx={{ 
-      position: 'relative', 
-      display: 'flex', 
-      flexDirection: 'column', 
+    <Box sx={{
+      position: 'relative',
+      display: 'flex',
+      flexDirection: 'column',
       alignItems: 'center',
       width: { xs: '100%', sm: `${100 / WORKFLOW_STEPS.length}%` },
       px: 1,
     }}>
       <WorkflowStepIcon active={active} completed={completed} icon={index + 1} />
-      
-      <Typography 
-        variant="body2" 
+
+      <Typography
+        variant="body2"
         fontWeight={active ? 700 : 500}
-        sx={{ 
-          mt: 1, 
+        sx={{
+          mt: 1,
           textAlign: 'center',
           transition: 'all 0.3s ease',
-          color: active 
-            ? theme.palette.primary.main 
+          color: active
+            ? theme.palette.primary.main
             : theme.palette.text.primary,
           opacity: active ? 1 : 0.9,
           transform: active ? 'scale(1.05)' : 'scale(1)',
@@ -233,11 +227,11 @@ const WorkflowStep: React.FC<WorkflowStepProps> = ({ index, active, completed, l
       >
         {label}
       </Typography>
-      
-      <Typography 
-        variant="caption" 
-        sx={{ 
-          display: 'block', 
+
+      <Typography
+        variant="caption"
+        sx={{
+          display: 'block',
           textAlign: 'center',
           color: theme.palette.text.secondary,
           height: 20,
@@ -248,7 +242,7 @@ const WorkflowStep: React.FC<WorkflowStepProps> = ({ index, active, completed, l
       >
         {description}
       </Typography>
-      
+
       {!last && (
         <ArrowConnector active={active} completed={completed}>
           <ArrowRightAltIcon />
@@ -326,9 +320,9 @@ const ChatArea: React.FC = () => {
   };
 
   const renderWorkflow = () => (
-    <Box sx={{ 
-      display: 'flex', 
-      justifyContent: 'center', 
+    <Box sx={{
+      display: 'flex',
+      justifyContent: 'center',
       alignItems: 'center',
       py: 4,
       px: 2,
@@ -389,15 +383,15 @@ const ChatArea: React.FC = () => {
           }}
         />
       </Box>
-      
+
       <Typography variant="h5" gutterBottom sx={{ fontWeight: 600 }}>
         Welcome to AI Chat
       </Typography>
-      
+
       <Typography variant="body1" color="text.secondary" sx={{ mb: 4, maxWidth: 600 }}>
         Ask me anything! I can help you with programming, debugging, or any other technical questions.
       </Typography>
-      
+
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, justifyContent: 'center', maxWidth: 800 }}>
         {SUGGESTIONS.map((suggestion, index) => (
           <Button
