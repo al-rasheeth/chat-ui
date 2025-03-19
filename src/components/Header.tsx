@@ -19,7 +19,12 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-const Header = ({ toggleTheme, isDarkMode }) => {
+interface HeaderProps {
+  toggleTheme: () => void;
+  isDarkMode: boolean;
+}
+
+const Header: React.FC<HeaderProps> = ({ toggleTheme, isDarkMode }) => {
   const theme = useTheme();
   
   return (

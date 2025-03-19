@@ -21,7 +21,12 @@ import rehypeSanitize from 'rehype-sanitize';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark, oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-const MarkdownRenderer = ({ content, isDarkMode }) => {
+interface MarkdownRendererProps {
+  content: string;
+  isDarkMode: boolean;
+}
+
+const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, isDarkMode }) => {
   return (
     <ReactMarkdown
       rehypePlugins={[rehypeRaw, rehypeSanitize]}
@@ -60,7 +65,10 @@ const MarkdownRenderer = ({ content, isDarkMode }) => {
             {children}
           </Typography>
         ),
-        code: ({ node, inline, className, children }) => {
+        code: ({ node, inline, className, children, ...props }: React.ComponentPropsWithoutRef<'code'> & {
+          inline?: boolean;
+          node?: any;
+        }) => {
           const match = /language-(\w+)/.exec(className || '');
           const language = match ? match[1] : '';
           
@@ -192,9 +200,14 @@ const MarkdownRenderer = ({ content, isDarkMode }) => {
   );
 };
 
-const ChatMessage = ({ message, isUser }) => {
+interface ChatMessageProps {
+  message: string;
+  isUser: boolean;
+}
+
+const ChatMessage: React.FC<ChatMessageProps> = ({ message, isUser }) => {
   const theme = useTheme();
-  const [copied, setCopied] = React.useState(false);
+  const [copied, setCopied] = React.useState<boolean>(false);
   const isDarkMode = theme.palette.mode === 'dark';
   const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
@@ -248,87 +261,47 @@ const ChatMessage = ({ message, isUser }) => {
                   : `${theme.palette.background.paper}`,
               borderRadius: 2,
               position: 'relative',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                boxShadow: theme.shadows[4],
-                transform: 'translateY(-2px)'
-              },
-              '&::before': {
-                content: '""',
-                position: 'absolute',
-                top: 20,
-                [isUser ? 'right' : 'left']: -10,
-                border: '5px solid transparent',
-                borderRightColor: isUser ? 'transparent' : isDarkMode 
-                  ? theme.palette.background.paper 
-                  : theme.palette.background.paper,
-                borderLeftColor: isUser 
-                  ? `${theme.palette.primary.main}15` 
-                  : 'transparent'
-              },
-              borderLeft: isUser 
-                ? 'none' 
-                : `4px solid ${theme.palette.secondary.main}`,
-              borderRight: isUser 
-                ? `4px solid ${theme.palette.primary.main}` 
-                : 'none'
             }}
           >
-            <Box 
-              sx={{ 
-                color: isUser 
-                  ? theme.palette.text.primary
-                  : theme.palette.text.primary,
-                '& pre': {
-                  backgroundColor: theme.palette.mode === 'dark' 
-                    ? 'rgba(255, 255, 255, 0.05)' 
-                    : 'rgba(0, 0, 0, 0.04)',
-                  borderRadius: 1,
-                  padding: 2,
-                  overflowX: 'auto'
+            <MarkdownRenderer content={message} isDarkMode={isDarkMode} />
+            <Box
+              className="message-time"
+              sx={{
+                position: 'absolute',
+                bottom: -20,
+                right: isUser ? 'auto' : 0,
+                left: isUser ? 0 : 'auto',
+                opacity: 0,
+                transition: 'opacity 0.2s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.5,
+                color: 'text.secondary',
+                fontSize: '0.75rem'
+              }}
+            >
+              <AccessTimeIcon sx={{ fontSize: '0.875rem' }} />
+              {currentTime}
+            </Box>
+            <IconButton
+              className="copy-button"
+              size="small"
+              onClick={handleCopy}
+              sx={{
+                position: 'absolute',
+                top: 8,
+                right: 8,
+                opacity: 0,
+                transition: 'opacity 0.2s ease',
+                color: 'text.secondary',
+                '&:hover': {
+                  color: 'primary.main'
                 }
               }}
             >
-              <MarkdownRenderer content={message} isDarkMode={isDarkMode} />
-            </Box>
-            <Tooltip title={copied ? "Copied!" : "Copy message"}>
-              <IconButton
-                size="small"
-                onClick={handleCopy}
-                className="copy-button"
-                sx={{
-                  position: 'absolute',
-                  top: 8,
-                  right: 8,
-                  opacity: 0,
-                  transition: 'all 0.2s ease',
-                  bgcolor: theme.palette.background.paper,
-                  '&:hover': {
-                    bgcolor: theme.palette.action.hover,
-                    transform: 'scale(1.1)'
-                  }
-                }}
-              >
-                {copied ? <DoneIcon fontSize="small" color="success" /> : <ContentCopyIcon fontSize="small" />}
-              </IconButton>
-            </Tooltip>
+              {copied ? <DoneIcon /> : <ContentCopyIcon />}
+            </IconButton>
           </Paper>
-          <Box 
-            className="message-time"
-            sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              mt: 0.5, 
-              justifyContent: isUser ? 'flex-end' : 'flex-start',
-              opacity: 0,
-              transition: 'opacity 0.3s ease',
-              color: 'text.secondary',
-              fontSize: '0.75rem'
-            }}
-          >
-            <AccessTimeIcon sx={{ fontSize: '0.875rem', mr: 0.5, opacity: 0.7 }} />
-            <Typography variant="caption">{currentTime}</Typography>
-          </Box>
         </Box>
       </Box>
     </Grow>

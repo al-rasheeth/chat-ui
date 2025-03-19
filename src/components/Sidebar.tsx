@@ -349,17 +349,9 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
 
 const Sidebar: React.FC = () => {
   const theme = useTheme();
-  const [settings, setSettings] = useState<Settings>(() => {
-    const savedSettings = localStorage.getItem('chatSettings');
-    return savedSettings ? JSON.parse(savedSettings) : DEFAULT_SETTINGS;
-  });
-  
-  const [chats, setChats] = useState<Chat[]>([
-    { id: '1', title: 'Chat 1', timestamp: Date.now() - 2000 },
-    { id: '2', title: 'Chat 2', timestamp: Date.now() - 1000 },
-    { id: '3', title: 'Chat 3', timestamp: Date.now() },
-  ]);
-  
+  const [chats, setChats] = useState<Chat[]>([]);
+  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
+  const [settingsExpanded, setSettingsExpanded] = useState(false);
   const [activeChat, setActiveChat] = useState<string | null>(null);
 
   const handleSettingsChange = (newSettings: Partial<Settings>) => {
@@ -393,110 +385,36 @@ const Sidebar: React.FC = () => {
   };
   
   return (
-    <Box 
-      sx={{ 
+    <Paper
+      elevation={0}
+      sx={{
         width: 280,
         height: '100%',
-        backgroundColor: theme.palette.background.paper,
-        borderRight: `1px solid ${theme.palette.divider}`,
-        transition: 'all 0.3s ease',
         display: 'flex',
         flexDirection: 'column',
-        boxShadow: theme.palette.mode === 'dark' 
-          ? 'inset -5px 0 10px -5px rgba(0,0,0,0.2)' 
-          : 'inset -5px 0 10px -5px rgba(0,0,0,0.1)',
-        position: 'relative',
+        borderRight: `1px solid ${theme.palette.divider}`,
+        bgcolor: theme.palette.background.paper,
         overflow: 'hidden'
       }}
     >
-      <Box 
-        sx={{ 
-          position: 'absolute', 
-          top: -100, 
-          left: -100, 
-          width: 200, 
-          height: 200, 
-          borderRadius: '50%',
-          background: `radial-gradient(circle, ${alpha(theme.palette.primary.main, 0.1)} 0%, transparent 70%)`,
-          zIndex: 0
-        }} 
-      />
-      
-      <Box p={2} position="relative" zIndex={1}>
-        <Button 
-          variant="contained" 
-          fullWidth 
+      <Box sx={{ p: 2, borderBottom: `1px solid ${theme.palette.divider}` }}>
+        <Button
+          variant="contained"
           startIcon={<AddIcon />}
           onClick={handleNewChat}
-          sx={{ 
-            mb: 2,
-            py: 1,
-            background: theme.palette.mode === 'dark' 
-              ? 'linear-gradient(45deg, #7986cb, #64b5f6)'
-              : 'linear-gradient(45deg, #1976d2, #2196f3)',
-            '&:hover': {
-              background: theme.palette.mode === 'dark'
-                ? 'linear-gradient(45deg, #5c6bc0, #42a5f5)'
-                : 'linear-gradient(45deg, #1565c0, #1e88e5)',
-              transform: 'translateY(-2px)',
-              boxShadow: theme.shadows[8]
-            },
-            transition: 'all 0.3s ease',
-            boxShadow: theme.shadows[4]
-          }}
+          fullWidth
+          sx={{ mb: 1 }}
         >
           New Chat
         </Button>
       </Box>
-      <Divider />
       
-      {/* Settings Section */}
-      <Box sx={{ p: 2, position: 'relative', zIndex: 1 }}>
-        <SettingsSection
-          settings={settings}
-          onChange={handleSettingsChange}
-          onSave={handleSettingsSave}
-          onReset={handleSettingsReset}
-        />
-      </Box>
-      <Divider />
-      
-      {/* Chat List */}
-      <Box 
-        sx={{ 
-          flexGrow: 1, 
-          overflowY: 'auto', 
-          px: 1, 
-          py: 1,
-          position: 'relative',
-          zIndex: 1,
-          '&::-webkit-scrollbar': {
-            width: '6px',
-          },
-          '&::-webkit-scrollbar-track': {
-            background: 'transparent',
-          },
-          '&::-webkit-scrollbar-thumb': {
-            background: theme.palette.mode === 'dark' ? '#555' : '#bbb',
-            borderRadius: '3px',
-          },
-          '&::-webkit-scrollbar-thumb:hover': {
-            background: theme.palette.mode === 'dark' ? '#777' : '#999',
-          },
-        }}
-      >
-        <Typography 
-          variant="overline" 
-          sx={{ 
-            display: 'block', 
-            px: 2, 
-            opacity: 0.7, 
-            fontSize: '0.7rem',
-            letterSpacing: 1
-          }}
-        >
-          Recent Chats
-        </Typography>
+      <Box sx={{ 
+        flex: 1, 
+        overflow: 'auto',
+        px: 1,
+        py: 1
+      }}>
         <List>
           {chats.map((chat) => (
             <ChatListItem
@@ -509,20 +427,20 @@ const Sidebar: React.FC = () => {
           ))}
         </List>
       </Box>
-      
-      <Box 
-        sx={{ 
-          position: 'absolute', 
-          bottom: -50, 
-          right: -50, 
-          width: 200, 
-          height: 200, 
-          borderRadius: '50%',
-          background: `radial-gradient(circle, ${alpha(theme.palette.secondary.main, 0.05)} 0%, transparent 70%)`,
-          zIndex: 0
-        }} 
-      />
-    </Box>
+
+      <Box sx={{ 
+        p: 2, 
+        borderTop: `1px solid ${theme.palette.divider}`,
+        bgcolor: theme.palette.background.paper
+      }}>
+        <SettingsSection
+          settings={settings}
+          onChange={handleSettingsChange}
+          onSave={handleSettingsSave}
+          onReset={handleSettingsReset}
+        />
+      </Box>
+    </Paper>
   );
 };
 
