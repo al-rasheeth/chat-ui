@@ -79,18 +79,32 @@ export const useChatStore = create<ChatStore>()(
             timestamp: Date.now(),
           };
 
-          set((state) => ({
-            chats: state.chats.map((chat) =>
-              chat.id === chatId
-                ? {
+          set((state) => {
+            const updatedChats = state.chats.map((chat) => {
+              if (chat.id === chatId) {
+                // If this is the first message and it's from the user, update the title
+                if (chat.messages.length === 0 && message.isUser) {
+                  const title = message.text.slice(0, 50) + (message.text.length > 50 ? '...' : '');
+                  return {
                     ...chat,
                     messages: [...chat.messages, newMessage],
                     lastUpdated: Date.now(),
-                  }
-                : chat
-            ),
-            isLoading: false,
-          }));
+                    title,
+                  };
+                }
+                return {
+                  ...chat,
+                  messages: [...chat.messages, newMessage],
+                  lastUpdated: Date.now(),
+                };
+              }
+              return chat;
+            });
+            return {
+              chats: updatedChats,
+              isLoading: false,
+            };
+          });
         } catch (error) {
           set({ error: error instanceof Error ? error.message : 'Failed to add message', isLoading: false });
           throw error;

@@ -27,7 +27,7 @@ export const Sidebar: React.FC = () => {
 
   const handleNewChat = async () => {
     try {
-      const newChatId = await addChat(`Chat ${chats.length + 1}`);
+      const newChatId = await addChat('New Chat');
       setActiveChat(newChatId);
     } catch (err) {
       console.error('Error creating new chat:', err);
