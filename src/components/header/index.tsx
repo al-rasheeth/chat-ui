@@ -114,20 +114,6 @@ export const Header: React.FC = () => {
               </IconButton>
             </Tooltip>
             
-            <Tooltip title="View on GitHub" TransitionComponent={Zoom}>
-              <IconButton 
-                color="inherit"
-                sx={{
-                  '&:hover': {
-                    transform: 'scale(1.1)',
-                    color: theme.palette.primary.main
-                  }
-                }}
-              >
-                <GitHubIcon />
-              </IconButton>
-            </Tooltip>
-            
             <Tooltip title="Notifications" TransitionComponent={Zoom}>
               <IconButton 
                 color="inherit"
