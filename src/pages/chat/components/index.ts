@@ -1,3 +1,2 @@
-export * from './Sidebar';
-export * from './ChatArea';
-export * from './ChatMessage';
+export * from './sidebar';
+export * from './chat-area';
