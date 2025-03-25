@@ -1,14 +1,23 @@
 import AddIcon from '@mui/icons-material/Add';
+import ChatIcon from '@mui/icons-material/Chat';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import SettingsIcon from '@mui/icons-material/Settings';
 import {
   Box,
   Button,
   CircularProgress,
+  IconButton,
   List,
   Paper,
+  Tooltip,
   Typography,
-  useTheme
+  useTheme,
+  alpha,
+  Drawer,
+  Divider
 } from '@mui/material';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useChatStore } from '../../../../store/chatStore';
 import { useUIStore } from '../../../../store/uiStore';
 import { ChatListItem } from './ChatListItem';
@@ -19,7 +28,8 @@ export const Sidebar: React.FC = () => {
   const theme = useTheme();
   const { chats, addChat, deleteChat, fetchChats, isLoading, error } = useChatStore();
   const { settings, updateSettings, resetSettings } = useSettingsStore();
-  const { activeChatId, setActiveChat } = useUIStore();
+  const { activeChatId, setActiveChat, isSidebarCollapsed, toggleSidebar } = useUIStore();
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   useEffect(() => {
     fetchChats();
@@ -48,85 +58,284 @@ export const Sidebar: React.FC = () => {
   };
 
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        width: 280,
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        borderRight: `1px solid ${theme.palette.divider}`,
-        bgcolor: theme.palette.background.paper,
-        overflow: 'hidden'
-      }}
-    >
-      <Box sx={{ p: 2, borderBottom: `1px solid ${theme.palette.divider}` }}>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={handleNewChat}
-          fullWidth
-          sx={{ mb: 1 }}
-          disabled={isLoading}
-        >
-          {isLoading ? <CircularProgress size={24} /> : 'New Chat'}
-        </Button>
-      </Box>
+    <Box sx={{ position: 'relative', height: '100%' }}>
+      <Paper
+        elevation={0}
+        sx={{
+          width: isSidebarCollapsed ? 64 : 280,
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          borderRight: `1px solid ${theme.palette.divider}`,
+          bgcolor: theme.palette.background.paper,
+          transition: theme.transitions.create(['width'], {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.enteringScreen,
+          }),
+          position: 'relative',
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            right: 0,
+            top: 0,
+            bottom: 0,
+            width: '4px',
+            background: `linear-gradient(to bottom, 
+              ${alpha(theme.palette.primary.main, 0.1)}, 
+              ${alpha(theme.palette.primary.main, 0.05)})`,
+            opacity: isSidebarCollapsed ? 0 : 1,
+            transition: theme.transitions.create(['opacity'], {
+              duration: theme.transitions.duration.enteringScreen,
+            }),
+          }
+        }}
+      >
+        <Box sx={{ 
+          p: 2, 
+          borderBottom: `1px solid ${theme.palette.divider}`, 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
+          position: 'relative',
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: '1px',
+            background: `linear-gradient(to right, 
+              ${alpha(theme.palette.divider, 0)}, 
+              ${alpha(theme.palette.divider, 0.5)}, 
+              ${alpha(theme.palette.divider, 0)})`,
+          }
+        }}>
+          {!isSidebarCollapsed ? (
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={handleNewChat}
+              fullWidth
+              disabled={isLoading}
+              sx={{
+                background: `linear-gradient(45deg, 
+                  ${theme.palette.primary.main}, 
+                  ${theme.palette.primary.light})`,
+                '&:hover': {
+                  background: `linear-gradient(45deg, 
+                    ${theme.palette.primary.dark}, 
+                    ${theme.palette.primary.main})`,
+                }
+              }}
+            >
+              {isLoading ? <CircularProgress size={24} /> : 'New Chat'}
+            </Button>
+          ) : (
+            <Tooltip title="New Chat">
+              <IconButton
+                onClick={handleNewChat}
+                sx={{
+                  minWidth: 40,
+                  height: 40,
+                  borderRadius: 1,
+                  background: `linear-gradient(45deg, 
+                    ${theme.palette.primary.main}, 
+                    ${theme.palette.primary.light})`,
+                  color: 'white',
+                  '&:hover': {
+                    background: `linear-gradient(45deg, 
+                      ${theme.palette.primary.dark}, 
+                      ${theme.palette.primary.main})`,
+                  }
+                }}
+              >
+                <AddIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Box>
 
-      <Box sx={{
-        flex: 1,
-        overflow: 'auto',
-        px: 1,
-        py: 1
-      }}>
-        <Typography
-          variant="caption"
+        {!isSidebarCollapsed ? (
+          <>
+            <Box sx={{
+              flex: 1,
+              overflow: 'auto',
+              px: 1,
+              py: 1
+            }}>
+              <Typography
+                variant="caption"
+                sx={{
+                  px: 2,
+                  py: 1,
+                  color: 'text.secondary',
+                  fontWeight: 500,
+                  textTransform: 'uppercase',
+                  letterSpacing: 0.5
+                }}
+              >
+                Recent Chats
+              </Typography>
+              <List>
+                {isLoading ? (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
+                    <CircularProgress />
+                  </Box>
+                ) : error ? (
+                  <Typography color="error" sx={{ px: 2, py: 1 }}>
+                    {error}
+                  </Typography>
+                ) : (
+                  chats.map((chat) => (
+                    <ChatListItem
+                      key={chat.id}
+                      chat={chat}
+                      onDelete={handleDeleteChat}
+                      isActive={activeChatId === chat.id}
+                      onClick={() => setActiveChat(chat.id)}
+                    />
+                  ))
+                )}
+              </List>
+            </Box>
+
+            <Box sx={{
+              p: 2,
+              borderTop: `1px solid ${theme.palette.divider}`,
+              bgcolor: theme.palette.background.paper,
+              position: 'relative',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                left: 0,
+                right: 0,
+                top: 0,
+                height: '1px',
+                background: `linear-gradient(to right, 
+                  ${alpha(theme.palette.divider, 0)}, 
+                  ${alpha(theme.palette.divider, 0.5)}, 
+                  ${alpha(theme.palette.divider, 0)})`,
+              }
+            }}>
+              <SettingsSection 
+                settings={settings}
+                onChange={updateSettings}
+                onSave={updateSettings}
+                onReset={resetSettings}
+              />
+            </Box>
+          </>
+        ) : (
+          <Box sx={{ 
+            flex: 1, 
+            display: 'flex', 
+            flexDirection: 'column',
+            alignItems: 'center',
+            py: 2,
+            gap: 2
+          }}>
+            <List sx={{ width: '100%', p: 0 }}>
+              {chats.map((chat) => (
+                <Tooltip key={chat.id} title={chat.title}>
+                  <IconButton
+                    onClick={() => setActiveChat(chat.id)}
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 1,
+                      bgcolor: activeChatId === chat.id ? alpha(theme.palette.primary.main, 0.1) : 'transparent',
+                      color: activeChatId === chat.id ? theme.palette.primary.main : 'inherit',
+                      '&:hover': {
+                        bgcolor: alpha(theme.palette.primary.main, 0.15),
+                      }
+                    }}
+                  >
+                    <ChatIcon />
+                  </IconButton>
+                </Tooltip>
+              ))}
+            </List>
+            <Box sx={{ mt: 'auto', mb: 2 }}>
+              <Tooltip title="Settings">
+                <IconButton
+                  onClick={() => setIsSettingsOpen(true)}
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 1,
+                    color: 'text.secondary',
+                    '&:hover': {
+                      bgcolor: alpha(theme.palette.primary.main, 0.1),
+                      color: theme.palette.primary.main,
+                    }
+                  }}
+                >
+                  <SettingsIcon />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          </Box>
+        )}
+      </Paper>
+
+      <Tooltip title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}>
+        <IconButton
+          onClick={toggleSidebar}
           sx={{
-            px: 2,
-            py: 1,
-            color: 'text.secondary',
-            fontWeight: 500,
-            textTransform: 'uppercase',
-            letterSpacing: 0.5
+            position: 'absolute',
+            right: -16,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: 32,
+            height: 32,
+            borderRadius: '50%',
+            bgcolor: theme.palette.background.paper,
+            border: `1px solid ${alpha(theme.palette.divider, 0.5)}`,
+            boxShadow: `0 2px 4px ${alpha(theme.palette.common.black, 0.1)}`,
+            zIndex: 1,
+            '&:hover': {
+              bgcolor: theme.palette.background.paper,
+              borderColor: theme.palette.primary.main,
+              boxShadow: `0 4px 8px ${alpha(theme.palette.common.black, 0.15)}`,
+              transform: 'translateY(-50%) scale(1.1)',
+            },
+            transition: theme.transitions.create(['transform', 'box-shadow', 'border-color'], {
+              duration: theme.transitions.duration.shorter,
+            })
           }}
         >
-          Recent Chats
-        </Typography>
-        <List>
-          {isLoading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-              <CircularProgress />
-            </Box>
-          ) : error ? (
-            <Typography color="error" sx={{ px: 2, py: 1 }}>
-              {error}
-            </Typography>
-          ) : (
-            chats.map((chat) => (
-              <ChatListItem
-                key={chat.id}
-                chat={chat}
-                onDelete={handleDeleteChat}
-                isActive={activeChatId === chat.id}
-                onClick={() => setActiveChat(chat.id)}
-              />
-            ))
-          )}
-        </List>
-      </Box>
+          {isSidebarCollapsed ? <ChevronRightIcon fontSize="small" /> : <ChevronLeftIcon fontSize="small" />}
+        </IconButton>
+      </Tooltip>
 
-      <Box sx={{
-        p: 2,
-        borderTop: `1px solid ${theme.palette.divider}`,
-        bgcolor: theme.palette.background.paper
-      }}>
-        <SettingsSection 
-          settings={settings}
-          onChange={updateSettings}
-          onSave={updateSettings}
-          onReset={resetSettings}
-        />
-      </Box>
-    </Paper>
+      <Drawer
+        anchor="right"
+        open={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        PaperProps={{
+          sx: {
+            width: 320,
+            bgcolor: theme.palette.background.paper,
+            borderLeft: `1px solid ${theme.palette.divider}`,
+          }
+        }}
+      >
+        <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Typography variant="h6">Settings</Typography>
+          <IconButton onClick={() => setIsSettingsOpen(false)}>
+            <ChevronRightIcon />
+          </IconButton>
+        </Box>
+        <Divider />
+        <Box sx={{ p: 2 }}>
+          <SettingsSection 
+            settings={settings}
+            onChange={updateSettings}
+            onSave={updateSettings}
+            onReset={resetSettings}
+          />
+        </Box>
+      </Drawer>
+    </Box>
   );
 };

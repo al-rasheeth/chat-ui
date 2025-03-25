@@ -30,4 +30,5 @@ export interface UIState {
   activeChatId: string | null;
   isLoading: boolean;
   currentWorkflowStep: number;
+  isSidebarCollapsed: boolean;
 } 
