@@ -1,77 +1,110 @@
-import ChatIcon from '@mui/icons-material/Chat';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { alpha, IconButton, ListItem, ListItemIcon, ListItemText, Tooltip, useTheme } from '@mui/material';
-import { ChatListItemProps } from './types';
+import DeleteIcon from '@mui/icons-material/Delete';
+import {
+  IconButton,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Tooltip,
+  Typography,
+  useTheme,
+  alpha,
+} from '@mui/material';
+import React from 'react';
+import { Chat } from './types';
+
+interface ChatListItemProps {
+  chat: Chat;
+  isActive: boolean;
+  onSelect: () => void;
+  onDelete: () => void;
+}
 
 export const ChatListItem: React.FC<ChatListItemProps> = ({
   chat,
-  onDelete,
   isActive,
-  onClick
+  onSelect,
+  onDelete,
 }) => {
   const theme = useTheme();
 
   return (
     <ListItem
-      component="div"
-      onClick={onClick}
-      sx={{
-        backgroundColor: isActive ? alpha(theme.palette.primary.main, 0.1) : 'transparent',
-        cursor: 'pointer',
-        borderRadius: 1,
-        mb: 0.5,
-        '&:hover': {
-          backgroundColor: isActive
-            ? alpha(theme.palette.primary.main, 0.15)
-            : theme.palette.action.hover,
-          transform: 'translateX(4px)',
-          '& .delete-icon': {
-            opacity: 1
-          }
-        }
-      }}
+      disablePadding
+      secondaryAction={
+        <Tooltip title="Delete Chat">
+          <IconButton
+            edge="end"
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            sx={{
+              opacity: 0,
+              transition: theme.transitions.create(['opacity'], {
+                duration: theme.transitions.duration.shorter,
+              }),
+              '&:hover': {
+                color: theme.palette.error.main,
+              },
+            }}
+          >
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      }
     >
-      <ListItemIcon>
-        <ChatIcon color={isActive ? "primary" : "inherit"} />
-      </ListItemIcon>
-      <ListItemText
-        primary={chat.title}
-        secondary={new Date(chat.timestamp).toLocaleDateString()}
-        primaryTypographyProps={{
-          noWrap: true,
-          style: {
-            fontWeight: isActive ? 600 : 500,
-            fontSize: '0.9rem'
-          }
-        }}
-        secondaryTypographyProps={{
-          noWrap: true,
-          style: {
-            fontSize: '0.75rem'
-          }
-        }}
+      <ListItemButton
+        selected={isActive}
+        onClick={onSelect}
         sx={{
-          overflow: 'hidden'
-        }}
-      />
-      <Tooltip title="Delete chat">
-        <IconButton
-          size="small"
-          className="delete-icon"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete(chat.id);
-          }}
-          sx={{
-            opacity: 0,
+          borderRadius: 1,
+          mx: 1,
+          '&.Mui-selected': {
+            bgcolor: alpha(theme.palette.primary.main, 0.1),
             '&:hover': {
-              color: theme.palette.error.main
-            }
-          }}
-        >
-          <DeleteOutlineIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
+              bgcolor: alpha(theme.palette.primary.main, 0.15),
+            },
+            '& .MuiListItemText-primary': {
+              color: theme.palette.primary.main,
+              fontWeight: 600,
+            },
+          },
+          '&:hover': {
+            bgcolor: alpha(theme.palette.primary.main, 0.05),
+            '& .MuiListItemSecondaryAction-root': {
+              opacity: 1,
+            },
+          },
+        }}
+      >
+        <ListItemText
+          primary={
+            <Typography
+              variant="body2"
+              sx={{
+                transition: theme.transitions.create(['color'], {
+                  duration: theme.transitions.duration.shorter,
+                }),
+              }}
+            >
+              {chat.title}
+            </Typography>
+          }
+          secondary={
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{
+                display: 'block',
+                mt: 0.5,
+              }}
+            >
+              {new Date(chat.lastUpdated).toLocaleDateString()}
+            </Typography>
+          }
+        />
+      </ListItemButton>
     </ListItem>
   );
 }; 

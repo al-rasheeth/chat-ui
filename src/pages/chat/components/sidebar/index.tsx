@@ -23,12 +23,14 @@ import { useUIStore } from '../../../../store/uiStore';
 import { ChatListItem } from './ChatListItem';
 import { SettingsSection } from './SettingsSection';
 import { useSettingsStore } from '../../../../store/settingsStore';
+import { MenuSection } from './MenuSection';
+import { MenuType } from '../../../../store/types';
 
 export const Sidebar: React.FC = () => {
   const theme = useTheme();
   const { chats, addChat, deleteChat, fetchChats, isLoading, error } = useChatStore();
   const { settings, updateSettings, resetSettings } = useSettingsStore();
-  const { activeChatId, setActiveChat, isSidebarCollapsed, toggleSidebar } = useUIStore();
+  const { activeChatId, setActiveChat, isSidebarCollapsed, toggleSidebar, activeMenu, setActiveMenu } = useUIStore();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   useEffect(() => {
@@ -39,9 +41,9 @@ export const Sidebar: React.FC = () => {
     try {
       const newChatId = await addChat('New Chat');
       setActiveChat(newChatId);
+      setActiveMenu(MenuType.CHAT);
     } catch (err) {
       console.error('Error creating new chat:', err);
-      // You might want to show an error message to the user here
     }
   };
 
@@ -53,8 +55,56 @@ export const Sidebar: React.FC = () => {
       }
     } catch (err) {
       console.error('Error deleting chat:', err);
-      // You might want to show an error message to the user here
     }
+  };
+
+  const renderNewChatButton = () => {
+    if (activeMenu !== MenuType.CHAT) return null;
+
+    if (!isSidebarCollapsed) {
+      return (
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={handleNewChat}
+          fullWidth
+          disabled={isLoading}
+          sx={{
+            background: `linear-gradient(45deg, 
+              ${theme.palette.primary.main}, 
+              ${theme.palette.primary.light})`,
+            '&:hover': {
+              background: `linear-gradient(45deg, 
+                ${theme.palette.primary.dark}, 
+                ${theme.palette.primary.main})`,
+            }
+          }}
+        >
+          {isLoading ? <CircularProgress size={24} /> : 'New Chat'}
+        </Button>
+      );
+    }
+
+    return (
+      <Tooltip title="New Chat">
+        <IconButton
+          onClick={handleNewChat}
+          disabled={isLoading}
+          sx={{
+            width: 40,
+            height: 40,
+            borderRadius: 1,
+            bgcolor: alpha(theme.palette.primary.main, 0.1),
+            color: theme.palette.primary.main,
+            '&:hover': {
+              bgcolor: alpha(theme.palette.primary.main, 0.15),
+            }
+          }}
+        >
+          {isLoading ? <CircularProgress size={24} /> : <AddIcon />}
+        </IconButton>
+      </Tooltip>
+    );
   };
 
   return (
@@ -110,120 +160,70 @@ export const Sidebar: React.FC = () => {
               ${alpha(theme.palette.divider, 0)})`,
           }
         }}>
-          {!isSidebarCollapsed ? (
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              onClick={handleNewChat}
-              fullWidth
-              disabled={isLoading}
-              sx={{
-                background: `linear-gradient(45deg, 
-                  ${theme.palette.primary.main}, 
-                  ${theme.palette.primary.light})`,
-                '&:hover': {
-                  background: `linear-gradient(45deg, 
-                    ${theme.palette.primary.dark}, 
-                    ${theme.palette.primary.main})`,
-                }
-              }}
-            >
-              {isLoading ? <CircularProgress size={24} /> : 'New Chat'}
-            </Button>
-          ) : (
-            <Tooltip title="New Chat">
-              <IconButton
-                onClick={handleNewChat}
-                sx={{
-                  minWidth: 40,
-                  height: 40,
-                  borderRadius: 1,
-                  background: `linear-gradient(45deg, 
-                    ${theme.palette.primary.main}, 
-                    ${theme.palette.primary.light})`,
-                  color: 'white',
-                  '&:hover': {
-                    background: `linear-gradient(45deg, 
-                      ${theme.palette.primary.dark}, 
-                      ${theme.palette.primary.main})`,
-                  }
-                }}
-              >
-                <AddIcon />
-              </IconButton>
-            </Tooltip>
-          )}
+          <Typography
+            variant="h6"
+            sx={{
+              fontSize: '1.25rem',
+              fontWeight: 600,
+              color: 'text.primary',
+              display: isSidebarCollapsed ? 'none' : 'block',
+            }}
+          >
+            Menu
+          </Typography>
         </Box>
 
         {!isSidebarCollapsed ? (
           <>
-            <Box sx={{
-              flex: 1,
-              overflow: 'auto',
-              px: 1,
-              py: 1
-            }}>
-              <Typography
-                variant="caption"
-                sx={{
-                  px: 2,
-                  py: 1,
-                  color: 'text.secondary',
-                  fontWeight: 500,
-                  textTransform: 'uppercase',
-                  letterSpacing: 0.5
-                }}
-              >
-                Recent Chats
-              </Typography>
-              <List>
-                {isLoading ? (
-                  <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-                    <CircularProgress />
-                  </Box>
-                ) : error ? (
-                  <Typography color="error" sx={{ px: 2, py: 1 }}>
-                    {error}
-                  </Typography>
-                ) : (
-                  chats.map((chat) => (
-                    <ChatListItem
-                      key={chat.id}
-                      chat={chat}
-                      onDelete={handleDeleteChat}
-                      isActive={activeChatId === chat.id}
-                      onClick={() => setActiveChat(chat.id)}
-                    />
-                  ))
-                )}
-              </List>
-            </Box>
+            <MenuSection activeMenu={activeMenu} onMenuSelect={setActiveMenu} />
+            
+            {activeMenu === MenuType.CHAT && (
+              <>
+                <Box sx={{ px: 2, py: 1 }}>
+                  {renderNewChatButton()}
+                </Box>
 
-            <Box sx={{
-              p: 2,
-              borderTop: `1px solid ${theme.palette.divider}`,
-              bgcolor: theme.palette.background.paper,
-              position: 'relative',
-              '&::before': {
-                content: '""',
-                position: 'absolute',
-                left: 0,
-                right: 0,
-                top: 0,
-                height: '1px',
-                background: `linear-gradient(to right, 
-                  ${alpha(theme.palette.divider, 0)}, 
-                  ${alpha(theme.palette.divider, 0.5)}, 
-                  ${alpha(theme.palette.divider, 0)})`,
-              }
-            }}>
-              <SettingsSection 
-                settings={settings}
-                onChange={updateSettings}
-                onSave={updateSettings}
-                onReset={resetSettings}
-              />
-            </Box>
+                <Box sx={{ flex: 1, overflow: 'auto', py: 1 }}>
+                  <List sx={{ p: 0 }}>
+                    {chats.map((chat) => (
+                      <ChatListItem
+                        key={chat.id}
+                        chat={chat}
+                        isActive={activeChatId === chat.id}
+                        onSelect={() => setActiveChat(chat.id)}
+                        onDelete={() => handleDeleteChat(chat.id)}
+                      />
+                    ))}
+                  </List>
+                </Box>
+
+                <Box sx={{
+                  p: 2,
+                  borderTop: `1px solid ${theme.palette.divider}`,
+                  bgcolor: theme.palette.background.paper,
+                  position: 'relative',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    height: '1px',
+                    background: `linear-gradient(to right, 
+                      ${alpha(theme.palette.divider, 0)}, 
+                      ${alpha(theme.palette.divider, 0.5)}, 
+                      ${alpha(theme.palette.divider, 0)})`,
+                  }
+                }}>
+                  <SettingsSection 
+                    settings={settings}
+                    onChange={updateSettings}
+                    onSave={updateSettings}
+                    onReset={resetSettings}
+                  />
+                </Box>
+              </>
+            )}
           </>
         ) : (
           <Box sx={{ 
@@ -234,27 +234,12 @@ export const Sidebar: React.FC = () => {
             py: 2,
             gap: 2
           }}>
-            <List sx={{ width: '100%', p: 0 }}>
-              {chats.map((chat) => (
-                <Tooltip key={chat.id} title={chat.title}>
-                  <IconButton
-                    onClick={() => setActiveChat(chat.id)}
-                    sx={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: 1,
-                      bgcolor: activeChatId === chat.id ? alpha(theme.palette.primary.main, 0.1) : 'transparent',
-                      color: activeChatId === chat.id ? theme.palette.primary.main : 'inherit',
-                      '&:hover': {
-                        bgcolor: alpha(theme.palette.primary.main, 0.15),
-                      }
-                    }}
-                  >
-                    <ChatIcon />
-                  </IconButton>
-                </Tooltip>
-              ))}
-            </List>
+            <MenuSection activeMenu={activeMenu} onMenuSelect={setActiveMenu} />
+            {activeMenu === MenuType.CHAT && (
+              <Box sx={{ mt: 1 }}>
+                {renderNewChatButton()}
+              </Box>
+            )}
             <Box sx={{ mt: 'auto', mb: 2 }}>
               <Tooltip title="Settings">
                 <IconButton

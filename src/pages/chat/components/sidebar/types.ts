@@ -4,6 +4,7 @@ export interface Chat {
   id: string;
   title: string;
   timestamp: number;
+  lastUpdated: number;
 }
 
 export interface Model {
@@ -14,9 +15,9 @@ export interface Model {
 
 export interface ChatListItemProps {
   chat: Chat;
-  onDelete: (id: string) => void;
-  isActive?: boolean;
-  onClick: () => void;
+  isActive: boolean;
+  onSelect: () => void;
+  onDelete: () => void;
 }
 
 export interface SettingsSectionProps {

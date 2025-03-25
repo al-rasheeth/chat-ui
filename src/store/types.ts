@@ -26,9 +26,15 @@ export interface Settings {
   systemPrompt: string;
 }
 
+export enum MenuType {
+  CHAT = 'chat',
+  FEEM_CONVERSION = 'feem_conversion'
+}
+
 export interface UIState {
   activeChatId: string | null;
   isLoading: boolean;
   currentWorkflowStep: number;
   isSidebarCollapsed: boolean;
+  activeMenu: MenuType;
 } 
