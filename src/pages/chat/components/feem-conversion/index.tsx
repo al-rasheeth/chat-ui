@@ -5,32 +5,107 @@ import {
   TextField,
   Typography,
   useTheme,
+  Alert,
+  CircularProgress,
 } from '@mui/material';
 import React, { useState } from 'react';
 import { alpha } from '@mui/material/styles';
+import JSZip from 'jszip';
+
+interface ConversionResponse {
+  [key: string]: any;
+}
 
 export const FeemConversion: React.FC = () => {
   const theme = useTheme();
-  const [input1, setInput1] = useState('');
-  const [input2, setInput2] = useState('');
-  const [file1, setFile1] = useState<File | null>(null);
-  const [file2, setFile2] = useState<File | null>(null);
+  const [rawTopicName, setRawTopicName] = useState('');
+  const [transformedTopicName, setTransformedTopicName] = useState('');
+  const [rawData, setRawData] = useState<File | null>(null);
+  const [transformedData, setTransformedData] = useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleFile1Change = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setFile1(event.target.files[0]);
+  const handleRawDataChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.type !== 'application/json') {
+        setError('Please upload a JSON file');
+        return;
+      }
+      setRawData(file);
+      setError(null);
     }
   };
 
-  const handleFile2Change = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setFile2(event.target.files[0]);
+  const handleTransformedDataChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.type !== 'application/json') {
+        setError('Please upload a JSON file');
+        return;
+      }
+      setTransformedData(file);
+      setError(null);
     }
   };
 
-  const handleSubmit = () => {
-    // Handle conversion logic here
-    console.log('Converting:', { input1, input2, file1, file2 });
+  const createAndDownloadZip = async (response: ConversionResponse) => {
+    const zip = new JSZip();
+    
+    // Create 7 files from the response
+    Object.entries(response).forEach(([key, value]) => {
+      zip.file(`${key}.json`, JSON.stringify(value, null, 2));
+    });
+
+    // Generate and download zip
+    const content = await zip.generateAsync({ type: 'blob' });
+    const url = window.URL.createObjectURL(content);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'converted_files.zip';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  };
+
+  const handleSubmit = async () => {
+    if (!rawTopicName || !transformedTopicName || !rawData || !transformedData) {
+      setError('Please fill in all fields and upload both files');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const rawDataContent = await rawData.text();
+      const transformedDataContent = await transformedData.text();
+
+      const response = await fetch('/api/convert', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          rawTopicName,
+          transformedTopicName,
+          rawData: JSON.parse(rawDataContent),
+          transformedData: JSON.parse(transformedDataContent),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Conversion failed');
+      }
+
+      const result: ConversionResponse = await response.json();
+      await createAndDownloadZip(result);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred during conversion');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -49,20 +124,26 @@ export const FeemConversion: React.FC = () => {
           Feem Conversion
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          Convert your files using the Feem conversion tool
+          Convert your JSON files using the Feem conversion tool
         </Typography>
+
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           <Box>
             <Typography variant="subtitle2" gutterBottom>
-              Input 1
+              Raw Topic Name
             </Typography>
             <TextField
               fullWidth
               size="small"
-              value={input1}
-              onChange={(e) => setInput1(e.target.value)}
-              placeholder="Enter text..."
+              value={rawTopicName}
+              onChange={(e) => setRawTopicName(e.target.value)}
+              placeholder="Enter raw topic name..."
               sx={{ mb: 1 }}
             />
             <Button
@@ -80,25 +161,26 @@ export const FeemConversion: React.FC = () => {
                 },
               }}
             >
-              {file1 ? file1.name : 'Choose File'}
+              {rawData ? rawData.name : 'Choose Raw Data JSON'}
               <input
                 type="file"
                 hidden
-                onChange={handleFile1Change}
+                accept="application/json"
+                onChange={handleRawDataChange}
               />
             </Button>
           </Box>
 
           <Box>
             <Typography variant="subtitle2" gutterBottom>
-              Input 2
+              Transformed Topic Name
             </Typography>
             <TextField
               fullWidth
               size="small"
-              value={input2}
-              onChange={(e) => setInput2(e.target.value)}
-              placeholder="Enter text..."
+              value={transformedTopicName}
+              onChange={(e) => setTransformedTopicName(e.target.value)}
+              placeholder="Enter transformed topic name..."
               sx={{ mb: 1 }}
             />
             <Button
@@ -116,11 +198,12 @@ export const FeemConversion: React.FC = () => {
                 },
               }}
             >
-              {file2 ? file2.name : 'Choose File'}
+              {transformedData ? transformedData.name : 'Choose Transformed Data JSON'}
               <input
                 type="file"
                 hidden
-                onChange={handleFile2Change}
+                accept="application/json"
+                onChange={handleTransformedDataChange}
               />
             </Button>
           </Box>
@@ -128,6 +211,7 @@ export const FeemConversion: React.FC = () => {
           <Button
             variant="contained"
             onClick={handleSubmit}
+            disabled={loading}
             sx={{
               mt: 2,
               background: `linear-gradient(45deg, 
@@ -140,7 +224,7 @@ export const FeemConversion: React.FC = () => {
               },
             }}
           >
-            Convert
+            {loading ? <CircularProgress size={24} /> : 'Convert'}
           </Button>
         </Box>
       </Paper>
