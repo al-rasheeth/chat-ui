@@ -67,6 +67,7 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ activeMenu, onMenuSele
                   mx: 1,
                   borderRadius: 1,
                   minHeight: 40,
+                  justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
                   '&.Mui-selected': {
                     bgcolor: alpha(theme.palette.primary.main, 0.1),
                     '&:hover': {
@@ -87,11 +88,12 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ activeMenu, onMenuSele
               >
                 <ListItemIcon
                   sx={{
-                    minWidth: 40,
+                    minWidth: isSidebarCollapsed ? 'auto' : 40,
                     color: 'text.secondary',
                     transition: theme.transitions.create(['color'], {
                       duration: theme.transitions.duration.shorter,
                     }),
+                    mr: isSidebarCollapsed ? 0 : 2,
                   }}
                 >
                   {item.icon}
