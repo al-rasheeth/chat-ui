@@ -140,38 +140,6 @@ export const Sidebar: React.FC = () => {
           }
         }}
       >
-        <Box sx={{ 
-          p: 2, 
-          borderBottom: `1px solid ${theme.palette.divider}`, 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: isSidebarCollapsed ? 'center' : 'flex-start',
-          position: 'relative',
-          '&::after': {
-            content: '""',
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: '1px',
-            background: `linear-gradient(to right, 
-              ${alpha(theme.palette.divider, 0)}, 
-              ${alpha(theme.palette.divider, 0.5)}, 
-              ${alpha(theme.palette.divider, 0)})`,
-          }
-        }}>
-          <Typography
-            variant="h6"
-            sx={{
-              fontSize: '1.25rem',
-              fontWeight: 600,
-              color: 'text.primary',
-              display: isSidebarCollapsed ? 'none' : 'block',
-            }}
-          >
-            Menu
-          </Typography>
-        </Box>
 
         {!isSidebarCollapsed ? (
           <>

@@ -40,22 +40,6 @@ export const MenuSection: React.FC<MenuSectionProps> = ({ activeMenu, onMenuSele
 
   return (
     <Box sx={{ mb: 2 }}>
-      {!isSidebarCollapsed && (
-        <Typography
-          variant="caption"
-          sx={{
-            px: 2,
-            py: 1,
-            display: 'block',
-            color: 'text.secondary',
-            fontWeight: 600,
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-          }}
-        >
-          Applications
-        </Typography>
-      )}
       <List sx={{ p: 0 }}>
         {menuItems.map((item) => (
           <ListItem key={item.id} disablePadding>
