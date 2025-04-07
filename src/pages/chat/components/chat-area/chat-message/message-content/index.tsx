@@ -3,6 +3,7 @@ import React from 'react';
 import { MarkdownRenderer } from '../../../../../../components/markdown-renderer';
 import { CopyButton } from '../copy-button';
 import { MessageTime } from '../message-time';
+import { JiraTicketButton } from '../jira-ticket-button';
 
 interface MessageContentProps {
   message: string;
@@ -21,6 +22,7 @@ export const MessageContent: React.FC<MessageContentProps> = ({
     <Box sx={{ position: 'relative', maxWidth: '85%', minWidth: '10%' }}>
       <Paper
         elevation={2}
+        className="message-content"
         sx={{
           p: 2,
           bgcolor: isUser
@@ -38,6 +40,7 @@ export const MessageContent: React.FC<MessageContentProps> = ({
         <MarkdownRenderer content={message} />
         <MessageTime isUser={isUser} time={time} />
         <CopyButton content={message} />
+        {!isUser && <JiraTicketButton message={message} />}
       </Paper>
     </Box>
   );
